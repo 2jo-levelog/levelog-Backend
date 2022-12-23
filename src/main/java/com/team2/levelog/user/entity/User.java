@@ -1,4 +1,4 @@
-package com.team2.levelog.login.entity;
+package com.team2.levelog.user.entity;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
