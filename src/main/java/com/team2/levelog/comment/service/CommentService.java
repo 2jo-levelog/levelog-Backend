@@ -22,22 +22,31 @@ public class CommentService {
 
     private final UserRepository userRepository; // 테스트를 위해 임시로 유저 끌어오기위한 의존성주입
 
+//    // 댓글, 대댓글 조회
+//    public List<Comment> getComment(Long postId){
+//        List<Comment> commentList = commentRepository.findAllByPost_Id(postId);
+//
+//
+//        return
+//    }
+
+
     // 댓글 작성
-//    public void createComment(Long postId, CommentRequestDto commentRequestDto, User user){
-    public void createComment(Long postId, CommentRequestDto commentRequestDto){
+    public void createComment(Long postId, CommentRequestDto commentRequestDto, User user){
+//    public void createComment(Long postId, CommentRequestDto commentRequestDto){
         Post post = postRepository.findById(postId).orElseThrow(
                 ()-> new IllegalArgumentException("해당 글이 없습니다")
         );
 
-        User user = userRepository.findById(1L).orElse(null); // 테스트 유저
+//        User user = userRepository.findById(1L).orElse(null); // 테스트 유저
 
         Comment newComment = new Comment(post, commentRequestDto, user);
         commentRepository.save(newComment);
     }
 
     // 대댓글 작성
-//    public void createReply(Long postId, Long commentsId, CommentRequestDto commentRequestDto, User user){
-    public void createReply(Long postId, Long commentsId, CommentRequestDto commentRequestDto){
+    public void createReply(Long postId, Long commentsId, CommentRequestDto commentRequestDto, User user){
+//    public void createReply(Long postId, Long commentsId, CommentRequestDto commentRequestDto){
         Post post = postRepository.findById(postId).orElseThrow(
                 ()-> new IllegalArgumentException("해당 글이 없습니다")
         );
@@ -46,7 +55,7 @@ public class CommentService {
                 ()-> new IllegalArgumentException("해당 댓글이 없습니다")
         );
 
-        User user = userRepository.findById(1L).orElse(null); // 테스트 유저
+//        User user = userRepository.findById(1L).orElse(null); // 테스트 유저
 
         Comment newComment = new Comment(post, comment, commentRequestDto, user);
         commentRepository.save(newComment);
@@ -54,8 +63,8 @@ public class CommentService {
 
     // 댓글, 대댓글 수정
     @Transactional
-//    public void modifyComment(Long commentsId, CommentRequestDto commentRequestDto, User user){
-    public void modifyComment(Long commentsId, CommentRequestDto commentRequestDto){
+    public void modifyComment(Long commentsId, CommentRequestDto commentRequestDto, User user){
+//    public void modifyComment(Long commentsId, CommentRequestDto commentRequestDto){
         Comment comment = commentRepository.findById(commentsId).orElseThrow(
                 ()-> new IllegalArgumentException("해당 댓글이 없습니다")
         );
@@ -64,8 +73,8 @@ public class CommentService {
     }
 
     // 댓글, 대댓글 삭제
-//    public void deleteComment(Long commentsId, User user){
-    public void deleteComment(Long commentsId){
+    public void deleteComment(Long commentsId, User user){
+//    public void deleteComment(Long commentsId){
         Comment comment = commentRepository.findById(commentsId).orElseThrow(
                 ()-> new IllegalArgumentException("해당 댓글이 없습니다")
         );
