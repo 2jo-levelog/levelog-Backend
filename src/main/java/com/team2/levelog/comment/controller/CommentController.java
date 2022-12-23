@@ -2,8 +2,10 @@ package com.team2.levelog.comment.controller;
 
 import com.team2.levelog.comment.dto.CommentRequestDto;
 import com.team2.levelog.comment.service.CommentService;
+import com.team2.levelog.global.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 // 1. 기능 : 댓글 CUD, 대댓글 CUD (Read기능은 Comment Service의 메소드로 Post에 사용예정)
 // 2. 작성자 : 조소영
@@ -30,7 +32,7 @@ public class CommentController {
     public void createReply(
             @PathVariable Long postId,
             @PathVariable Long commentsId,
-            @RequestBody CommentRequestDto commentRequestDto
+            @RequestBody CommentRequestDto commentRequestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails){
 //    public void createReply(@PathVariable Long postId, @PathVariable Long commentsId, @RequestBody CommentRequestDto commentRequestDto){
         commentService.createReply(postId, commentsId, commentRequestDto, userDetails.getUser());
@@ -52,7 +54,7 @@ public class CommentController {
     // 댓글, 대댓글 삭제
     @DeleteMapping("/comments/{commentsId}")
     public void deleteComment(
-            @PathVariable Long commentsId
+            @PathVariable Long commentsId,
             @AuthenticationPrincipal UserDetailsImpl userDetails){
 //    public void deleteComment(@PathVariable Long commentsId){
         commentService.deleteComment(commentsId, userDetails.getUser());
