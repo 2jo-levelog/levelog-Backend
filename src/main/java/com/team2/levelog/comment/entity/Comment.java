@@ -10,7 +10,7 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-// 1. 기능 : 댓글 Entity
+// 1. 기능 : 댓글, 대댓글 Entity
 // 2. 작성자 : 조소영
 @Entity
 @Getter
@@ -37,8 +37,8 @@ public class Comment extends Timestamped {
     @Column
     private int depth;
 
-    // 댓글
-    @OneToMany(mappedBy = "children")
+    // 댓글 (고아객체 삭제, 영속성 전이로 자식인 대댓글의 생명주기 관리)
+    @OneToMany(mappedBy = "children", orphanRemoval = true, cascade = CascadeType.REMOVE)
     @Column
     private List<Comment> parent = new ArrayList<>();
 
@@ -46,5 +46,4 @@ public class Comment extends Timestamped {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_Id")
     private Comment children;
-
 }
