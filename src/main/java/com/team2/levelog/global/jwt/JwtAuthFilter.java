@@ -35,7 +35,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             }
             // 3. 토큰이 유효하다면 토큰에서 정보를 가져와 Authentication 에 세팅
             Claims info = jwtUtil.getUserInfoFromToken(token);
-            setAuthentication((String)info.get("userId"));
+            setAuthentication((String)info.get("nickname"));
         }
         // 4. 다음 필터로 넘어간다
         filterChain.doFilter(request, response);

@@ -21,7 +21,7 @@ public class Post extends Timestamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne
-    @JoinColumn(name = "user_ㅑd")
+    @JoinColumn(name = "user_id")
     private User user;
     @Column
     private String title;
@@ -36,14 +36,14 @@ public class Post extends Timestamped {
 
     public Post(PostRequestDto postRequestDto, User user) {
         this.user       =    user;
-        this.title      =    title;
-        this.content    =    content;
+        this.title      =    postRequestDto.getTitle();
+        this.content    =    postRequestDto.getContent();
         this.nickname   =    user.getNickname();
     }
 
     public void update(PostRequestDto postRequestDto) {
-        this.title      =    title;
-        this.content    =    content;
+        this.title      =    postRequestDto.getTitle();
+        this.content    =    postRequestDto.getContent();
     }
 
     public void update_count(int n){
