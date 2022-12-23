@@ -1,5 +1,6 @@
 package com.team2.levelog.post.controller;
 
+import com.team2.levelog.global.security.UserDetailsImpl;
 import com.team2.levelog.post.dto.PostRequestDto;
 import com.team2.levelog.post.dto.PostResponseDto;
 import com.team2.levelog.post.dto.ResponseDto;
@@ -7,6 +8,7 @@ import com.team2.levelog.post.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Collections;

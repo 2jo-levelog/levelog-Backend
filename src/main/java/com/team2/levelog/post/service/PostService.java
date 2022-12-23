@@ -1,6 +1,8 @@
 package com.team2.levelog.post.service;
 
 
+import com.team2.levelog.comment.dto.CommentResponseDto;
+import com.team2.levelog.comment.entity.Comment;
 import com.team2.levelog.comment.repository.CommentRepository;
 import com.team2.levelog.post.dto.PostLikesResponseDto;
 import com.team2.levelog.post.entity.Likes;
@@ -69,8 +71,8 @@ public class PostService {
         for (Comment comment : post.getCommentList()) {
             List<CommentResponseDto> childCommentList = new ArrayList<>();
             if(comment.getParent()==null){
-                for (Comment childComment : comment.getChildren()){
-                    if (id.equals(childComment.getProduct().getId())) {
+                for (Comment childComment : comment.getParent()){
+                    if (id.equals(childComment.getPost().getId())) {
                         childCommentList.add(new CommentResponseDto(childComment));
                     }
                 }
