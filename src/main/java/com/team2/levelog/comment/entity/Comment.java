@@ -1,5 +1,6 @@
 package com.team2.levelog.comment.entity;
 
+import com.team2.levelog.comment.dto.CommentRequestDto;
 import com.team2.levelog.global.timestamped.Timestamped;
 import com.team2.levelog.post.entity.Post;
 import com.team2.levelog.user.entity.User;
@@ -39,11 +40,29 @@ public class Comment extends Timestamped {
 
     // 댓글 (고아객체 삭제, 영속성 전이로 자식인 대댓글의 생명주기 관리)
     @OneToMany(mappedBy = "children", orphanRemoval = true, cascade = CascadeType.REMOVE)
-    @Column
     private List<Comment> parent = new ArrayList<>();
 
     // 대댓글
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_Id")
     private Comment children;
+
+    public Comment(Post post, CommentRequestDto commentRequestDto, User user){
+        this.user = user;
+        this.post = post;
+        this.nickname = user.getNickname();
+        this.comment = commentRequestDto.getComment();
+    }
+
+    public Comment(Post post, Comment children, CommentRequestDto commentRequestDto, User user){
+        this.user = user;
+        this.post = post;
+        this.children = children;
+        this.nickname = user.getNickname();
+        this.comment = commentRequestDto.getComment();
+    }
+
+    public void update(CommentRequestDto commentRequestDto){
+        this.comment = commentRequestDto.getComment();
+    }
 }
