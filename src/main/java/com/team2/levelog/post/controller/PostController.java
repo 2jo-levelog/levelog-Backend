@@ -34,15 +34,14 @@ public class PostController {
     @PostMapping ("/users/{id}/posts/write")
     public ResponseEntity<?> addPost(
             @RequestPart(value = "key") PostRequestDto postRequestDto,
-            @RequestPart(value = "multipartFile") MultipartFile multipartFile,
+            @RequestPart(value = "multipartFile") List<MultipartFile> multipartFiles,
             @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
 
-        if(multipartFile==null) {
+        if(multipartFiles==null) {
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
-        String imageFile = s3Service.upload(multipartFile);
-
-        return ResponseEntity.ok(postService.addPost(postRequestDto, userDetails.getUser(), imageFile));
+        List<String> imageFiles = s3Service.upload(multipartFiles);
+        return ResponseEntity.ok(postService.addPost(postRequestDto, userDetails.getUser(), imageFiles));
     }
 
     @GetMapping("/main")
