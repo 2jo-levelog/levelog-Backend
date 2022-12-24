@@ -1,17 +1,16 @@
 package com.team2.levelog.post.controller;
 
 import com.team2.levelog.global.security.UserDetailsImpl;
+import com.team2.levelog.post.dto.PostBlogDto;
+import com.team2.levelog.post.dto.PostMainPageDto;
 import com.team2.levelog.post.dto.PostRequestDto;
 import com.team2.levelog.post.dto.PostResponseDto;
-import com.team2.levelog.post.dto.ResponseDto;
 import com.team2.levelog.post.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Collections;
 import java.util.List;
 
 // 1. 기능      :   Post 관련 API 컨트롤러 구현
@@ -33,7 +32,7 @@ public class PostController {
 //    }
 
     @GetMapping("/main")
-    public ResponseEntity<List<PostResponseDto>> getMainPage(){
+    public ResponseEntity<List<PostMainPageDto>> getMainPage(){
         return ResponseEntity.ok(postService.getMainPage());
     }
 
@@ -43,8 +42,8 @@ public class PostController {
     }
 
     @GetMapping("/users/{id}/posts")
-    public ResponseEntity<List<PostResponseDto>> getPosts(@PathVariable Long id){
-        return ResponseEntity.ok(Collections.singletonList(postService.getPosts(id)));
+    public ResponseEntity<List<PostBlogDto>> getPosts(@PathVariable Long id){
+        return ResponseEntity.ok(postService.getPosts(id));
     }
 
     @GetMapping("/users/posts/{id}")

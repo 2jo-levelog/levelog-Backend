@@ -47,6 +47,6 @@ public class Post extends Timestamped {
     }
 
     public void update_count(int n){
-        this.count = count + 1;
+        this.count = count + n;
     }
 }
