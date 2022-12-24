@@ -12,7 +12,4 @@ import java.util.Optional;
 // 1. 기능 : 댓글 Repository
 // 2. 작성자 : 조소영
 public interface CommentRepository extends JpaRepository<Comment, Long> {
-
-//    @Query("select c from comment c where (c.post_id = :postId) and (c.) ")
-//    List<Comment> findAllByPost_Id(@Param("postId") Long postId);
 }

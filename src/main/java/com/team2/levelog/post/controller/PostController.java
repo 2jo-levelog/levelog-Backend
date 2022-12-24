@@ -4,17 +4,16 @@ import com.team2.levelog.global.GlobalResponse.ResponseUtil;
 import com.team2.levelog.global.GlobalResponse.code.SuccessCode;
 import com.team2.levelog.global.security.UserDetailsImpl;
 import com.team2.levelog.post.dto.PostLikesResponseDto;
+import com.team2.levelog.post.dto.PostBlogDto;
+import com.team2.levelog.post.dto.PostMainPageDto;
 import com.team2.levelog.post.dto.PostRequestDto;
 import com.team2.levelog.post.dto.PostResponseDto;
-import com.team2.levelog.post.dto.ResponseDto;
 import com.team2.levelog.post.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Collections;
 import java.util.List;
 
 // 1. 기능      :   Post 관련 API 컨트롤러 구현
@@ -65,7 +64,7 @@ public class PostController {
         postService.deletePost(id, userDetails.getUser());
         return ResponseUtil.successResponse(SuccessCode.DELETE_OK);
     }
-
+    
     @PostMapping("users/posts/{id}/likes")
     public ResponseEntity<?> postlike(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseUtil.successResponse(postService.postLike(id, userDetails.getUser()));

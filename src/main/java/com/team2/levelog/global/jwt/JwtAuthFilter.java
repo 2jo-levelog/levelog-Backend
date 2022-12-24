@@ -55,9 +55,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     }
 
     // 권한 설정
-    public void setAuthentication(String username) {
+    public void setAuthentication(String nickname) {
         SecurityContext context = SecurityContextHolder.createEmptyContext();
-        Authentication authentication = jwtUtil.createAuthentication(username);
+        Authentication authentication = jwtUtil.createAuthentication(nickname);
         context.setAuthentication(authentication);
         SecurityContextHolder.setContext(context);
     }

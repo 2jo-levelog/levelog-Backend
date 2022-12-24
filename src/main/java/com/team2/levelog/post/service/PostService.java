@@ -7,10 +7,9 @@ import com.team2.levelog.comment.repository.CommentRepository;
 import com.team2.levelog.global.GlobalResponse.CustomException;
 import com.team2.levelog.global.GlobalResponse.code.ErrorCode;
 import com.team2.levelog.post.dto.PostLikesResponseDto;
+import com.team2.levelog.post.dto.*;
 import com.team2.levelog.post.entity.Likes;
 import com.team2.levelog.post.repository.LikesRepository;
-import com.team2.levelog.post.dto.PostRequestDto;
-import com.team2.levelog.post.dto.PostResponseDto;
 import com.team2.levelog.post.entity.Post;
 import com.team2.levelog.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 // 1. 기능      :   Post 관련 모든 비즈니스 로직
 // 2. 작성자     :   홍윤재
@@ -43,24 +43,26 @@ public class PostService {
 
     // 메인페이지 게시글 보기
     @Transactional
-    public List<PostResponseDto> getMainPage(){
+    public List<PostMainPageDto> getMainPage(){
         // 생성 시간 기준으로 모든 포스트 데이터를 DB -> postList 객체에 저장
         List<Post> postList = postRepository.findAllByOrderByCreatedAtDesc();
         // Dto 리스트 미리 선언
-        List<PostResponseDto> postResponseDtoList = new ArrayList<>();
-        for(Post post: postList){
+        List<PostMainPageDto> postMainPageDtoList = new ArrayList<>();
+        for(Post post : postList){
             // postList에 담긴 데이터들을 하나씩 Dto 리스트에 담아줌
-            postResponseDtoList.add(new PostResponseDto(post));
+            postMainPageDtoList.add(new PostMainPageDto(post));
         }
-        return postResponseDtoList;
+        return postMainPageDtoList;
     }
 
     // 개인 블로그 게시글 전체 보기
-    public PostResponseDto getPosts(Long id) {
-        Post post = postRepository.findById(id).orElseThrow(
-                ()-> new CustomException(ErrorCode.POST_NOT_FOUND)
-        );
-        return new PostResponseDto(post);
+    public List<PostBlogDto> getPosts(Long id) {
+        List<Post> postList = postRepository.findAllByUserId(id);
+        List<PostBlogDto> postBlogDtoList = new ArrayList<>();
+        for (Post post : postList) {
+            postBlogDtoList.add(new PostBlogDto(post));
+        }
+        return postBlogDtoList;
     }
 
     //개인 블로그 게시글 상세페이지
@@ -72,10 +74,10 @@ public class PostService {
         List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
         for (Comment comment : post.getCommentList()) {
             List<CommentResponseDto> childCommentList = new ArrayList<>();
-            if(comment.getParent()==null){
-                for (Comment childComment : comment.getParent()){
-                    if (id.equals(childComment.getPost().getId())) {
-                        childCommentList.add(new CommentResponseDto(childComment));
+            if(comment.getChildren()==null){
+                for (Comment parentComment : comment.getParent()){
+                    if (id.equals(parentComment.getPost().getId())) {
+                        childCommentList.add(new CommentResponseDto(parentComment));
                     }
                 }
                 commentResponseDtoList.add(new CommentResponseDto(comment,childCommentList));
@@ -119,11 +121,11 @@ public class PostService {
         );
 
         if(likesRepository.findByPostAndUser(post, user).isPresent()) {
-            likesRepository.deleteByPostAndUser(post, user);
             post.update_count(-1);
+            likesRepository.deleteByPostAndUser(post, user);
         } else {
-            likesRepository.save(new Likes(user, post));
             post.update_count(1);
+            likesRepository.save(new Likes(user, post));
         }
         return new PostLikesResponseDto(post.getCount());
     }
