@@ -3,6 +3,7 @@ package com.team2.levelog.post.controller;
 import com.team2.levelog.global.GlobalResponse.ResponseUtil;
 import com.team2.levelog.global.GlobalResponse.code.SuccessCode;
 import com.team2.levelog.global.security.UserDetailsImpl;
+import com.team2.levelog.image.service.S3Service;
 import com.team2.levelog.post.dto.PostLikesResponseDto;
 import com.team2.levelog.post.dto.PostBlogDto;
 import com.team2.levelog.post.dto.PostMainPageDto;
@@ -10,10 +11,13 @@ import com.team2.levelog.post.dto.PostRequestDto;
 import com.team2.levelog.post.dto.PostResponseDto;
 import com.team2.levelog.post.service.PostService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 // 1. 기능      :   Post 관련 API 컨트롤러 구현
@@ -24,25 +28,32 @@ import java.util.List;
 @RequestMapping("/api")
 public class PostController {
     private final PostService postService;
+    private final S3Service s3Service;
 
     // S3 업데이트 이후 사용할 맵핑
-//    @PostMapping ("/{id}/posts/write")
-//    public ResponseEntity<ResponseDto> addPost(
-//            @RequestPart(value = "key") PostRequestDto postRequestDto,
-//            @RequestPart(value = "multipartFile")List<MultipartFile> multipartFile,
-//            @AuthentivationPrincipal UserDtailsImpl userDtails){
-//        return ResponseEntity.ok(postService.addPost(postRequestDto, userDtails.getUser(), awsS3Service.uploadFile(multipartFile, dirName)));
-//    }
+    @PostMapping ("/users/{id}/posts/write")
+    public ResponseEntity<?> addPost(
+            @RequestPart(value = "key") PostRequestDto postRequestDto,
+            @RequestPart(value = "multipartFile") MultipartFile multipartFile,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
+
+        if(multipartFile==null) {
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        }
+        String imageFile = s3Service.upload(multipartFile);
+
+        return ResponseEntity.ok(postService.addPost(postRequestDto, userDetails.getUser(), imageFile));
+    }
 
     @GetMapping("/main")
     public ResponseEntity<?> getMainPage(){
         return ResponseUtil.successResponse(postService.getMainPage());
     }
 
-    @PostMapping("/users/{id}/posts/write")
-    public ResponseEntity<?> addPost(@RequestBody PostRequestDto postRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
-        return ResponseUtil.successResponse(postService.addPost(postRequestDto, userDetails.getUser()));
-    }
+//    @PostMapping("/users/{id}/posts/write")
+//    public ResponseEntity<?> addPost(@RequestBody PostRequestDto postRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
+//        return ResponseUtil.successResponse(postService.addPost(postRequestDto, userDetails.getUser()));
+//    }
 
     @GetMapping("/users/{id}/posts")
     public ResponseEntity<?> getPosts(@PathVariable Long id){

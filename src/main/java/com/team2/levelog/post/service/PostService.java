@@ -6,6 +6,8 @@ import com.team2.levelog.comment.entity.Comment;
 import com.team2.levelog.comment.repository.CommentRepository;
 import com.team2.levelog.global.GlobalResponse.CustomException;
 import com.team2.levelog.global.GlobalResponse.code.ErrorCode;
+import com.team2.levelog.image.entity.Image;
+import com.team2.levelog.image.repository.ImageRepository;
 import com.team2.levelog.post.dto.PostLikesResponseDto;
 import com.team2.levelog.post.dto.*;
 import com.team2.levelog.post.entity.Likes;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Service;
 import com.team2.levelog.user.entity.User;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.imageio.ImageReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -29,15 +32,19 @@ public class PostService {
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
     private final LikesRepository likesRepository;
+    private final ImageRepository imageRepository;
 
     //게시글 생성하기
     @Transactional
-    public PostResponseDto addPost(PostRequestDto productRequestDto, User user){
+    public PostResponseDto addPost(PostRequestDto productRequestDto, User user, String imageFile){
         Post post = postRepository.save(new Post(productRequestDto,user));                   // 저장소에 입력 받은 데이터 저장 // save()때문에 @Transactional 을 사용하지 않아도 됨
         List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();                 // 댓글을 dto로 감쌈
         for (Comment comment : post.getCommentList()) {
             commentResponseDtoList.add(new CommentResponseDto(comment));
         }
+        // db에 url 저장
+        Image image = new Image(imageFile, post);
+        imageRepository.save(image);
         return new PostResponseDto(post ,commentResponseDtoList);
     }
 
