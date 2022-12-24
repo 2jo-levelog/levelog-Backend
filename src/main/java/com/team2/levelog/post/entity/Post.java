@@ -2,6 +2,7 @@ package com.team2.levelog.post.entity;
 
 import com.team2.levelog.comment.entity.Comment;
 import com.team2.levelog.global.timestamped.Timestamped;
+import com.team2.levelog.image.entity.Image;
 import com.team2.levelog.post.dto.PostRequestDto;
 import com.team2.levelog.user.entity.User;
 import lombok.AllArgsConstructor;
@@ -33,6 +34,11 @@ public class Post extends Timestamped {
     private List<Comment> commentList = new ArrayList<>();
     @Column(nullable = false)
     private int count;
+
+    @OneToMany(
+            mappedBy = "post", cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
+            orphanRemoval = true)
+    private List<Image> images = new ArrayList<>();
 
     public Post(PostRequestDto postRequestDto, User user) {
         this.user       =    user;
