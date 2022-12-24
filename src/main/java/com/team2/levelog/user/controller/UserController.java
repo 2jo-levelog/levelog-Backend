@@ -1,6 +1,7 @@
 package com.team2.levelog.user.controller;
 
-import com.team2.levelog.user.dto.LoginRequestDto;
+import com.team2.levelog.user.dto.DupRequestCheck;
+import com.team2.levelog.user.dto.SigninRequestDto;
 import com.team2.levelog.user.dto.SignUpRequestDto;
 import com.team2.levelog.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -25,9 +26,19 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response) {
-        userService.login(loginRequestDto, response);
+    public ResponseEntity<?> login(@RequestBody SigninRequestDto signinRequestDto, HttpServletResponse response) {
+        userService.login(signinRequestDto, response);
         return null;
+    }
+
+    @PostMapping("/dupemail")
+    public ResponseEntity<?> dupEmailCheck(@RequestBody DupRequestCheck requestCheck) {
+        return userService.dupCheckEmail(requestCheck);
+    }
+
+    @PostMapping("/dupnick")
+    public ResponseEntity<?> dupNickCheck(@RequestBody DupRequestCheck requestCheck) {
+        return userService.dupCheckNick(requestCheck);
     }
 
 }

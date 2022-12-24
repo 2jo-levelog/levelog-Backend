@@ -20,8 +20,8 @@ public class SignUpRequestDto {
     private String password;
 
     // 닉네임 정규식 검사
-    @Pattern(regexp = "[a-zA-Z0-9ㄱ-ㅎ가-힣]{2,12}",
-            message = "최소 4 자 최대 12 자, 영어 대소문자, 숫자, 한글 만 사용")
+    @Pattern(regexp = "[a-zA-Z0-9가-힣]{2,12}",
+            message = "최소 2 자 최대 12 자, 영어 대소문자, 숫자, 한글 만 사용")
     private String nickname;
 
     // 프로필 이미지 default 로 들어가는 이미지도 존재한다.
