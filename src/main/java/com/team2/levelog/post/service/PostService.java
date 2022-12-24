@@ -36,15 +36,19 @@ public class PostService {
 
     //게시글 생성하기
     @Transactional
-    public PostResponseDto addPost(PostRequestDto productRequestDto, User user, String imageFile){
+    public PostResponseDto addPost(PostRequestDto productRequestDto, User user, List<String> imageFiles){
         Post post = postRepository.save(new Post(productRequestDto,user));                   // 저장소에 입력 받은 데이터 저장 // save()때문에 @Transactional 을 사용하지 않아도 됨
         List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();                 // 댓글을 dto로 감쌈
         for (Comment comment : post.getCommentList()) {
             commentResponseDtoList.add(new CommentResponseDto(comment));
         }
         // db에 url 저장
-        Image image = new Image(imageFile, post);
-        imageRepository.save(image);
+        List<String> imageList = new ArrayList<>();
+        for(String imageFile : imageFiles) {
+            Image image = new Image(imageFile, post);
+            imageRepository.save(image);
+            imageList.add(image.getImageFile());
+        }
         return new PostResponseDto(post ,commentResponseDtoList);
     }
 
