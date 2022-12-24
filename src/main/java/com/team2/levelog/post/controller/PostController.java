@@ -36,7 +36,7 @@ public class PostController {
         return ResponseEntity.ok(postService.getMainPage());
     }
 
-    @PostMapping("/users/{id}/posts/write")
+    @PostMapping("/posts/write")
     public ResponseEntity<PostResponseDto> addPost(@RequestBody PostRequestDto postRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
         return ResponseEntity.ok(postService.addPost(postRequestDto, userDetails.getUser()));
     }
@@ -46,22 +46,22 @@ public class PostController {
         return ResponseEntity.ok(postService.getPosts(id));
     }
 
-    @GetMapping("/users/posts/{id}")
+    @GetMapping("/posts/{id}")
     public ResponseEntity<PostResponseDto> getpost(@PathVariable Long id){
         return ResponseEntity.ok(postService.getPost(id));
     }
 
-    @PutMapping("users/posts/{id}")
+    @PutMapping("/posts/{id}")
     public ResponseEntity<PostResponseDto> updatePost(@PathVariable Long id, @RequestBody PostRequestDto postRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseEntity.ok(postService.updatePost(id, postRequestDto, userDetails.getUser()));
     }
 
-    @DeleteMapping("users/posts/{id}")
+    @DeleteMapping("/posts/{id}")
     public void deletePost(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         postService.deletePost(id, userDetails.getUser());
     }
 
-    @PostMapping("users/posts/{id}/likes")
+    @PostMapping("/posts/{id}/likes")
     public void postlike(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         postService.postLike(id, userDetails.getUser());
     }

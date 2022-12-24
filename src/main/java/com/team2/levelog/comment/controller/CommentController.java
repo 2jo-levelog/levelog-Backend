@@ -10,7 +10,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 // 1. 기능 : 댓글 CUD, 대댓글 CUD (Read기능은 Comment Service의 메소드로 Post에 사용예정)
 // 2. 작성자 : 조소영
 @RestController
-@RequestMapping("/api/users/{userId}/posts")
+@RequestMapping("/api/posts")
 @RequiredArgsConstructor
 public class CommentController {
 
