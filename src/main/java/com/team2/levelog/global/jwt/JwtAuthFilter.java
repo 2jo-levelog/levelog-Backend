@@ -1,5 +1,10 @@
 package com.team2.levelog.global.jwt;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.team2.levelog.global.GlobalResponse.CustomException;
+import com.team2.levelog.global.GlobalResponse.GlobalResponseDto;
+import com.team2.levelog.global.GlobalResponse.ResponseUtil;
+import com.team2.levelog.global.GlobalResponse.code.ErrorCode;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +36,15 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         // 2. 토큰 유효 판별
         if(token != null) {
             if(!jwtUtil.validateToken(token)){
-                throw new IllegalArgumentException("Token Error");
+                response.setStatus(ErrorCode.INVALID_TOKEN.getHttpStatus().value());
+                response.setContentType("application/json; charset=UTF-8");
+                try {
+                    String json = new ObjectMapper().writeValueAsString(new GlobalResponseDto(ErrorCode.INVALID_TOKEN));
+                    response.getWriter().write(json);
+                } catch (Exception e) {
+                    log.error(e.getMessage());
+                }
+                return;
             }
             // 3. 토큰이 유효하다면 토큰에서 정보를 가져와 Authentication 에 세팅
             Claims info = jwtUtil.getUserInfoFromToken(token);

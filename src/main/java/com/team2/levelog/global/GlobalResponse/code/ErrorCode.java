@@ -23,7 +23,6 @@ public enum ErrorCode {
 
     // 401 UNAUTHORIZED : 인증되지 않은 사용자
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰입니다"),
-    INVALID_AUTH_TOKEN(HttpStatus.UNAUTHORIZED, "권한 정보가 없는 토큰입니다"),
     NO_ACCESS(HttpStatus.UNAUTHORIZED, "작성자만 삭제/수정할 수 있습니다."),
 
 
@@ -40,7 +39,8 @@ public enum ErrorCode {
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 에러"),
     MALFORMED_JWT(HttpStatus.INTERNAL_SERVER_ERROR, "유효하지 않는 JWT 입니다"),
     EXPIRED_JWT(HttpStatus.INTERNAL_SERVER_ERROR, "만료된 JWT 입니다"),
-    EXUnsupportedJwt_JWT(HttpStatus.INTERNAL_SERVER_ERROR, "지원되지 않는 JWT 입니다"),
+    UnsupportedJwt_JWT(HttpStatus.INTERNAL_SERVER_ERROR, "지원되지 않는 JWT 입니다"),
+    SQL_CONSTRAINT_VIOLATION(HttpStatus.INTERNAL_SERVER_ERROR, "무결성 제약 조건에 위배됩니다"),
     SPRING_SECURITY_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "시큐리티 에러");
 
     private final HttpStatus httpStatus;
