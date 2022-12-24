@@ -11,7 +11,6 @@ public class CommentResponseDto extends Timestamped {
     private Long id;
     private String nickname;
     private String comment;
-    private String content;
     private List<CommentResponseDto> children = new ArrayList<>();
 
     public CommentResponseDto(Comment comment){
