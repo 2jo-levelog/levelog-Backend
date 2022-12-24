@@ -1,6 +1,9 @@
 package com.team2.levelog.post.controller;
 
+import com.team2.levelog.global.GlobalResponse.ResponseUtil;
+import com.team2.levelog.global.GlobalResponse.code.SuccessCode;
 import com.team2.levelog.global.security.UserDetailsImpl;
+import com.team2.levelog.post.dto.PostLikesResponseDto;
 import com.team2.levelog.post.dto.PostBlogDto;
 import com.team2.levelog.post.dto.PostMainPageDto;
 import com.team2.levelog.post.dto.PostRequestDto;
@@ -32,37 +35,38 @@ public class PostController {
 //    }
 
     @GetMapping("/main")
-    public ResponseEntity<List<PostMainPageDto>> getMainPage(){
-        return ResponseEntity.ok(postService.getMainPage());
+    public ResponseEntity<?> getMainPage(){
+        return ResponseUtil.successResponse(postService.getMainPage());
     }
 
-    @PostMapping("/posts/write")
-    public ResponseEntity<PostResponseDto> addPost(@RequestBody PostRequestDto postRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
-        return ResponseEntity.ok(postService.addPost(postRequestDto, userDetails.getUser()));
+    @PostMapping("/users/{id}/posts/write")
+    public ResponseEntity<?> addPost(@RequestBody PostRequestDto postRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        return ResponseUtil.successResponse(postService.addPost(postRequestDto, userDetails.getUser()));
     }
 
     @GetMapping("/users/{id}/posts")
-    public ResponseEntity<List<PostBlogDto>> getPosts(@PathVariable Long id){
-        return ResponseEntity.ok(postService.getPosts(id));
+    public ResponseEntity<?> getPosts(@PathVariable Long id){
+        return ResponseUtil.successResponse(postService.getPosts(id));
     }
 
-    @GetMapping("/posts/{id}")
-    public ResponseEntity<PostResponseDto> getpost(@PathVariable Long id){
-        return ResponseEntity.ok(postService.getPost(id));
+    @GetMapping("/users/posts/{id}")
+    public ResponseEntity<?> getpost(@PathVariable Long id){
+        return ResponseUtil.successResponse(postService.getPost(id));
     }
 
-    @PutMapping("/posts/{id}")
-    public ResponseEntity<PostResponseDto> updatePost(@PathVariable Long id, @RequestBody PostRequestDto postRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return ResponseEntity.ok(postService.updatePost(id, postRequestDto, userDetails.getUser()));
+    @PutMapping("users/posts/{id}")
+    public ResponseEntity<?> updatePost(@PathVariable Long id, @RequestBody PostRequestDto postRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseUtil.successResponse(postService.updatePost(id, postRequestDto, userDetails.getUser()));
     }
 
-    @DeleteMapping("/posts/{id}")
-    public void deletePost(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    @DeleteMapping("users/posts/{id}")
+    public ResponseEntity<?> deletePost(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         postService.deletePost(id, userDetails.getUser());
+        return ResponseUtil.successResponse(SuccessCode.DELETE_OK);
     }
-
-    @PostMapping("/posts/{id}/likes")
-    public void postlike(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        postService.postLike(id, userDetails.getUser());
+    
+    @PostMapping("users/posts/{id}/likes")
+    public ResponseEntity<?> postlike(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseUtil.successResponse(postService.postLike(id, userDetails.getUser()));
     }
 }

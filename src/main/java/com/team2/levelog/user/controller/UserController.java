@@ -1,5 +1,8 @@
 package com.team2.levelog.user.controller;
 
+import com.team2.levelog.global.GlobalResponse.ResponseUtil;
+import com.team2.levelog.global.GlobalResponse.code.ErrorCode;
+import com.team2.levelog.global.GlobalResponse.code.SuccessCode;
 import com.team2.levelog.global.security.UserDetailsImpl;
 import com.team2.levelog.user.dto.DupRequestCheck;
 import com.team2.levelog.user.dto.SigninRequestDto;
@@ -24,23 +27,29 @@ public class UserController {
     @PostMapping("/signUp")
     public ResponseEntity<?> signUp(@RequestBody @Valid SignUpRequestDto signUpRequestDto) {
         userService.signUp(signUpRequestDto);
-        return null;
+        return ResponseUtil.successResponse(SuccessCode.SIGNUP_OK);
     }
 
     @PostMapping("/signIn")
     public ResponseEntity<?> login(@RequestBody SigninRequestDto signinRequestDto, HttpServletResponse response) {
         userService.login(signinRequestDto, response);
-        return null;
+        return ResponseUtil.successResponse(SuccessCode.SIGNIN_OK);
     }
 
     @PostMapping("/dupEmail")
     public ResponseEntity<?> dupEmailCheck(@RequestBody DupRequestCheck requestCheck) {
-        return userService.dupCheckEmail(requestCheck);
+        if(userService.dupCheckEmail(requestCheck)){
+            return ResponseUtil.errorResponse(ErrorCode.EXIST_EMAIL);
+        }
+        return ResponseUtil.successResponse(SuccessCode.AVAILABLE_EMAIL);
     }
 
     @PostMapping("/dupNick")
     public ResponseEntity<?> dupNickCheck(@RequestBody DupRequestCheck requestCheck) {
-        return userService.dupCheckNick(requestCheck);
+        if(userService.dupCheckNick(requestCheck)){
+            return ResponseUtil.errorResponse(ErrorCode.EXIST_NICKNAME);
+        }
+        return ResponseUtil.successResponse(SuccessCode.AVAILABLE_NICKNAME);
     }
 
 }

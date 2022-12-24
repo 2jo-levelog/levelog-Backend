@@ -1,5 +1,6 @@
 package com.team2.levelog.global.jwt;
 
+import com.team2.levelog.global.GlobalResponse.CustomException;
 import com.team2.levelog.global.security.UserDetailsServiceImpl;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
