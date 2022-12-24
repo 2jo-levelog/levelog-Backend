@@ -22,9 +22,7 @@ public class CommentController {
             @PathVariable Long postId,
             @RequestBody CommentRequestDto commentRequestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails){
-//    public void createComment(@PathVariable Long postId, @RequestBody CommentRequestDto commentRequestDto){
         commentService.createComment(postId, commentRequestDto, userDetails.getUser());
-//        commentService.createComment(postId, commentRequestDto);
     }
 
     // 대댓글 작성
@@ -34,9 +32,7 @@ public class CommentController {
             @PathVariable Long commentsId,
             @RequestBody CommentRequestDto commentRequestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails){
-//    public void createReply(@PathVariable Long postId, @PathVariable Long commentsId, @RequestBody CommentRequestDto commentRequestDto){
         commentService.createReply(postId, commentsId, commentRequestDto, userDetails.getUser());
-//        commentService.createReply(postId, commentsId, commentRequestDto);
     }
 
     // 댓글, 대댓글 수정
@@ -45,10 +41,7 @@ public class CommentController {
             @PathVariable Long commentsId,
             @RequestBody CommentRequestDto commentRequestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails){
-//    public void modifyComment(@PathVariable Long commentsId, @RequestBody CommentRequestDto commentRequestDto){
         commentService.modifyComment(commentsId, commentRequestDto, userDetails.getUser());
-//        commentService.modifyComment(commentsId, commentRequestDto);
-
     }
 
     // 댓글, 대댓글 삭제
@@ -56,17 +49,6 @@ public class CommentController {
     public void deleteComment(
             @PathVariable Long commentsId,
             @AuthenticationPrincipal UserDetailsImpl userDetails){
-//    public void deleteComment(@PathVariable Long commentsId){
         commentService.deleteComment(commentsId, userDetails.getUser());
-//        commentService.deleteComment(commentsId);
     }
-
-
-//    // 테스트용 조회
-//    @GetMapping("/comments")
-//    public void getComment(){
-//        commentService.getComment();
-//    }
-
-
 }
