@@ -3,6 +3,8 @@ package com.team2.levelog.comment.service;
 import com.team2.levelog.comment.dto.CommentRequestDto;
 import com.team2.levelog.comment.entity.Comment;
 import com.team2.levelog.comment.repository.CommentRepository;
+import com.team2.levelog.global.GlobalResponse.CustomException;
+import com.team2.levelog.global.GlobalResponse.code.ErrorCode;
 import com.team2.levelog.post.entity.Post;
 import com.team2.levelog.post.repository.PostRepository;
 import com.team2.levelog.user.entity.User;
@@ -10,8 +12,6 @@ import com.team2.levelog.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -35,7 +35,7 @@ public class CommentService {
     public void createComment(Long postId, CommentRequestDto commentRequestDto, User user){
 //    public void createComment(Long postId, CommentRequestDto commentRequestDto){
         Post post = postRepository.findById(postId).orElseThrow(
-                ()-> new IllegalArgumentException("해당 글이 없습니다")
+                ()-> new CustomException(ErrorCode.POST_NOT_FOUND)
         );
 
 //        User user = userRepository.findById(1L).orElse(null); // 테스트 유저
@@ -48,11 +48,11 @@ public class CommentService {
     public void createReply(Long postId, Long commentsId, CommentRequestDto commentRequestDto, User user){
 //    public void createReply(Long postId, Long commentsId, CommentRequestDto commentRequestDto){
         Post post = postRepository.findById(postId).orElseThrow(
-                ()-> new IllegalArgumentException("해당 글이 없습니다")
+                ()-> new CustomException(ErrorCode.POST_NOT_FOUND)
         );
 
         Comment comment = commentRepository.findById(commentsId).orElseThrow(
-                ()-> new IllegalArgumentException("해당 댓글이 없습니다")
+                ()-> new CustomException(ErrorCode.COMMENT_NOT_FOUND)
         );
 
 //        User user = userRepository.findById(1L).orElse(null); // 테스트 유저
@@ -66,7 +66,7 @@ public class CommentService {
     public void modifyComment(Long commentsId, CommentRequestDto commentRequestDto, User user){
 //    public void modifyComment(Long commentsId, CommentRequestDto commentRequestDto){
         Comment comment = commentRepository.findById(commentsId).orElseThrow(
-                ()-> new IllegalArgumentException("해당 댓글이 없습니다")
+                ()-> new CustomException(ErrorCode.COMMENT_NOT_FOUND)
         );
 
         comment.update(commentRequestDto);
@@ -76,7 +76,7 @@ public class CommentService {
     public void deleteComment(Long commentsId, User user){
 //    public void deleteComment(Long commentsId){
         Comment comment = commentRepository.findById(commentsId).orElseThrow(
-                ()-> new IllegalArgumentException("해당 댓글이 없습니다")
+                ()-> new CustomException(ErrorCode.COMMENT_NOT_FOUND)
         );
 
         commentRepository.delete(comment);

@@ -4,6 +4,8 @@ package com.team2.levelog.post.service;
 import com.team2.levelog.comment.dto.CommentResponseDto;
 import com.team2.levelog.comment.entity.Comment;
 import com.team2.levelog.comment.repository.CommentRepository;
+import com.team2.levelog.global.GlobalResponse.CustomException;
+import com.team2.levelog.global.GlobalResponse.code.ErrorCode;
 import com.team2.levelog.post.dto.PostLikesResponseDto;
 import com.team2.levelog.post.entity.Likes;
 import com.team2.levelog.post.repository.LikesRepository;
@@ -56,7 +58,7 @@ public class PostService {
     // 개인 블로그 게시글 전체 보기
     public PostResponseDto getPosts(Long id) {
         Post post = postRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("오류임!")
+                ()-> new CustomException(ErrorCode.POST_NOT_FOUND)
         );
         return new PostResponseDto(post);
     }
@@ -65,7 +67,7 @@ public class PostService {
     public PostResponseDto getPost(Long id) {
 
         Post post = postRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("오류임!")
+                ()-> new CustomException(ErrorCode.POST_NOT_FOUND)
         );
         List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
         for (Comment comment : post.getCommentList()) {
@@ -86,26 +88,26 @@ public class PostService {
     @Transactional
     public PostResponseDto updatePost(Long id, PostRequestDto postRequestDto, User user) {
         Post post = postRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("오류임!")
+                ()-> new CustomException(ErrorCode.POST_NOT_FOUND)
         );
 
         if(user.getId().equals(post.getUser().getId())) {           // 작성자 아이디가 현재 로그인한 아이디와 같은지 확인
             post.update(postRequestDto);
             return new PostResponseDto(post);
         } else {
-            throw new IllegalArgumentException("오류임!");
+            throw new CustomException(ErrorCode.NO_ACCESS);
         }
     }
 
     // 포스트 삭제
     public void deletePost(Long id, User user) {
         Post post = postRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("오류임!")
+                ()-> new CustomException(ErrorCode.POST_NOT_FOUND)
         );
         if(user.getId().equals(post.getUser().getId())) {
             postRepository.delete(post);
         }else {
-            new IllegalArgumentException("오류임!");
+            throw new CustomException(ErrorCode.NO_ACCESS);
         }
     }
 
@@ -113,7 +115,7 @@ public class PostService {
     @Transactional
     public PostLikesResponseDto postLike(Long id, User user) {
         Post post = postRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("오류임!!")
+                ()-> new CustomException(ErrorCode.POST_NOT_FOUND)
         );
 
         if(likesRepository.findByPostAndUser(post, user).isPresent()) {

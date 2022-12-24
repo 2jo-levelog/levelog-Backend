@@ -13,7 +13,9 @@ public enum ErrorCode {
     //400 BAD_REQUEST : 잘못된 요청
     BAD_REQUEST(HttpStatus.BAD_REQUEST, "요청이 올바르지 않습니다"),
     BAD_REQUEST_TOKEN(HttpStatus.BAD_REQUEST, "토큰이 유효하지 않습니다."),
-    EXIST_EMAIL(HttpStatus.BAD_REQUEST, "중복된 이메일이 존재합니다."), //******
+    EXIST_EMAIL(HttpStatus.BAD_REQUEST, "중복된 이메일이 존재합니다."),
+    EXIST_NICKNAME(HttpStatus.BAD_REQUEST, "중복된 닉네임이 존재합니다."),
+    NOTEXIST_EMAIL(HttpStatus.BAD_REQUEST, "존재하지 않는 이메일입니다."),
     LOGIN_MATCH_FAIL(HttpStatus.BAD_REQUEST, "회원을 찾을 수 없습니다."),
     INVALID_ID_PASSWORD(HttpStatus.BAD_REQUEST, "아이디나 비밀번호의 구성이 알맞지 않습니다"),
     BAD_PASSWORD(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다"),
@@ -35,7 +37,11 @@ public enum ErrorCode {
     DUPLICATE_RESOURCE(HttpStatus.CONFLICT, "데이터가 이미 존재합니다"),
 
     //500
-    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 에러");
+    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 에러"),
+    MALFORMED_JWT(HttpStatus.INTERNAL_SERVER_ERROR, "유효하지 않는 JWT 입니다"),
+    EXPIRED_JWT(HttpStatus.INTERNAL_SERVER_ERROR, "만료된 JWT 입니다"),
+    EXUnsupportedJwt_JWT(HttpStatus.INTERNAL_SERVER_ERROR, "지원되지 않는 JWT 입니다"),
+    SPRING_SECURITY_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "시큐리티 에러");
 
     private final HttpStatus httpStatus;
     private final String message;

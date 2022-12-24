@@ -1,5 +1,8 @@
 package com.team2.levelog.user.service;
 
+import com.team2.levelog.global.GlobalResponse.CustomException;
+import com.team2.levelog.global.GlobalResponse.code.ErrorCode;
+import com.team2.levelog.global.GlobalResponse.code.SuccessCode;
 import com.team2.levelog.global.TestDto;
 import com.team2.levelog.global.jwt.JwtUtil;
 import com.team2.levelog.user.dto.DupRequestCheck;
@@ -29,10 +32,10 @@ public class UserService {
     public void signUp(SignUpRequestDto requestDto) {
         // 1. 중복 여부 검사
         if (userRepository.existsByEmail(requestDto.getEmail())) {
-            throw new IllegalArgumentException("중복 이메일 존재");
+            throw new CustomException(ErrorCode.EXIST_EMAIL);
         }
         if (userRepository.existsByNickname(requestDto.getNickname())) {
-            throw new IllegalArgumentException("중복 닉네임 존재");
+            throw new CustomException(ErrorCode.EXIST_NICKNAME);
         }
 
         String encodePassword = passwordEncoder.encode(requestDto.getPassword());
@@ -47,29 +50,29 @@ public class UserService {
         String password = requestDto.getPassword();
 
         User user = userRepository.findByEmail(email).orElseThrow(
-                () -> new IllegalArgumentException("존재하지 않는 이메일 입니다.")
+                () -> new CustomException(ErrorCode.NOTEXIST_EMAIL)
         );
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+            throw new CustomException(ErrorCode.BAD_PASSWORD);
         }
 
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(user.getEmail(), user.getNickname(), UserRoleEnum.USER.getAuthority()));
     }
 
-    public ResponseEntity<TestDto> dupCheckEmail(DupRequestCheck requestCheck) {
+    public boolean dupCheckEmail(DupRequestCheck requestCheck) {
         if (userRepository.existsByEmail(requestCheck.getEmail())) {
-            return ResponseEntity.badRequest().body(new TestDto(400, "중복 이메일 존재"));
+            return true;
         } else {
-            return ResponseEntity.ok().body(new TestDto(200, "사용 가능한 이메일 입니다."));
+            return false;
         }
     }
 
-    public ResponseEntity<TestDto> dupCheckNick(DupRequestCheck requestCheck) {
+    public boolean dupCheckNick(DupRequestCheck requestCheck) {
         if (userRepository.existsByNickname(requestCheck.getNickname())) {
-            return ResponseEntity.badRequest().body(new TestDto(400, "중복 닉네임 존재"));
+            return true;
         } else {
-            return ResponseEntity.ok().body(new TestDto(200, "사용 가능한 닉네임 입니다."));
+            return false;
         }
     }
 
