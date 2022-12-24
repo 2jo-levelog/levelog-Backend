@@ -63,19 +63,17 @@ public class WebSecurityConfig {
                 .cors()
 
                 .and()
+                .logout()
+                .logoutUrl("/api/auth/logout")
+                .logoutSuccessUrl("/api/auth/signIn")
+                .deleteCookies("Authorization")
+                .logoutSuccessHandler((request, response, authentication) -> response.sendRedirect("/api/auth/signIn"))
+
+                .and()
                 .addFilterBefore(new JwtAuthFilter(jwtUtil),
                         UsernamePasswordAuthenticationFilter.class);
 
-        http.logout()
-                .logoutUrl("/api/auth/logout")
-                .logoutSuccessUrl("/")
-                .deleteCookies("JSESSIONID", "remember-me")
-                .logoutSuccessHandler((request, response, authentication) -> response.sendRedirect("/"))
-                .addLogoutHandler((request, response, authentication) -> {
-                    System.out.println("로그아웃 완료");
-                    HttpSession session = request.getSession();
-                    session.invalidate();
-                });
+
 
         return http.build();
     }
