@@ -19,6 +19,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import javax.servlet.http.HttpSession;
+
 // 1. 기능   : Spring Security 설정
 // 2. 작성자 : 서혁수
 @Configuration
@@ -63,6 +65,17 @@ public class WebSecurityConfig {
                 .and()
                 .addFilterBefore(new JwtAuthFilter(jwtUtil),
                         UsernamePasswordAuthenticationFilter.class);
+
+        http.logout()
+                .logoutUrl("/api/auth/logout")
+                .logoutSuccessUrl("/")
+                .deleteCookies("JSESSIONID", "remember-me")
+                .logoutSuccessHandler((request, response, authentication) -> response.sendRedirect("/"))
+                .addLogoutHandler((request, response, authentication) -> {
+                    System.out.println("로그아웃 완료");
+                    HttpSession session = request.getSession();
+                    session.invalidate();
+                });
 
         return http.build();
     }

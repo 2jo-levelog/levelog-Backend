@@ -1,12 +1,15 @@
 package com.team2.levelog.user.service;
 
+import com.team2.levelog.global.TestDto;
 import com.team2.levelog.global.jwt.JwtUtil;
-import com.team2.levelog.user.dto.LoginRequestDto;
+import com.team2.levelog.user.dto.DupRequestCheck;
+import com.team2.levelog.user.dto.SigninRequestDto;
 import com.team2.levelog.user.dto.SignUpRequestDto;
 import com.team2.levelog.user.entity.User;
 import com.team2.levelog.user.entity.UserRoleEnum;
 import com.team2.levelog.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -39,7 +42,7 @@ public class UserService {
     }
 
     // 폼 로그인
-    public void login(LoginRequestDto requestDto, HttpServletResponse response) {
+    public void login(SigninRequestDto requestDto, HttpServletResponse response) {
         String email = requestDto.getEmail();
         String password = requestDto.getPassword();
 
@@ -52,6 +55,22 @@ public class UserService {
         }
 
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(user.getEmail(), user.getNickname(), UserRoleEnum.USER.getAuthority()));
+    }
+
+    public ResponseEntity<TestDto> dupCheckEmail(DupRequestCheck requestCheck) {
+        if (userRepository.existsByEmail(requestCheck.getEmail())) {
+            return ResponseEntity.badRequest().body(new TestDto(400, "중복 이메일 존재"));
+        } else {
+            return ResponseEntity.ok().body(new TestDto(200, "사용 가능한 이메일 입니다."));
+        }
+    }
+
+    public ResponseEntity<TestDto> dupCheckNick(DupRequestCheck requestCheck) {
+        if (userRepository.existsByNickname(requestCheck.getNickname())) {
+            return ResponseEntity.badRequest().body(new TestDto(400, "중복 닉네임 존재"));
+        } else {
+            return ResponseEntity.ok().body(new TestDto(200, "사용 가능한 닉네임 입니다."));
+        }
     }
 
     // 회원탈퇴
