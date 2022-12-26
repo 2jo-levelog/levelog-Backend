@@ -31,7 +31,7 @@ public class PostController {
     private final S3Service s3Service;
 
     // S3 업데이트 이후 사용할 맵핑
-    @PostMapping ("/users/{id}/posts/write")
+    @PostMapping ("/posts/write")
     public ResponseEntity<?> addPost(
             @RequestPart(value = "key") PostRequestDto postRequestDto,
             @RequestPart(value = "multipartFile") List<MultipartFile> multipartFiles,
