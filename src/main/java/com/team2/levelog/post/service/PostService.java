@@ -64,8 +64,8 @@ public class PostService {
             List<ImageResponseDto> imageResponseDtoList = new ArrayList<>();
             for (Image image : post.getImages()) {
                 imageResponseDtoList.add(new ImageResponseDto(image));
-                postMainPageDtoList.add(new PostMainPageDto(post, imageResponseDtoList));
             }
+            postMainPageDtoList.add(new PostMainPageDto(post, imageResponseDtoList));
         }
         return postMainPageDtoList;
     }
@@ -78,8 +78,8 @@ public class PostService {
             List<ImageResponseDto> imageResponseDtoList = new ArrayList<>();
             for (Image image : post.getImages()) {
                 imageResponseDtoList.add(new ImageResponseDto(image));
-                postBlogDtoList.add(new PostBlogDto(post, imageResponseDtoList));
             }
+            postBlogDtoList.add(new PostBlogDto(post, imageResponseDtoList));
         }
         return postBlogDtoList;
     }
