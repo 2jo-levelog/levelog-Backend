@@ -36,20 +36,25 @@ public class UserController {
         return ResponseUtil.successResponse(SuccessCode.SIGNIN_OK);
     }
 
-    @PostMapping("/dupEmail")
-    public ResponseEntity<?> dupEmailCheck(@RequestBody DupRequestCheck requestCheck) {
-        if(userService.dupCheckEmail(requestCheck)){
-            return ResponseUtil.errorResponse(ErrorCode.EXIST_EMAIL);
-        }
-        return ResponseUtil.successResponse(SuccessCode.AVAILABLE_EMAIL);
-    }
+//    @GetMapping("/issue/token")
+//    public ResponseEntity<?> issueToken(@AuthenticationPrincipal UserDetailsImpl userDetails, HttpServletResponse response) {
+//        return userService.
+//    }
 
-    @PostMapping("/dupNick")
-    public ResponseEntity<?> dupNickCheck(@RequestBody DupRequestCheck requestCheck) {
-        if(userService.dupCheckNick(requestCheck)){
-            return ResponseUtil.errorResponse(ErrorCode.EXIST_NICKNAME);
-        }
-        return ResponseUtil.successResponse(SuccessCode.AVAILABLE_NICKNAME);
-    }
+//    @PostMapping("/dupEmail")
+//    public ResponseEntity<?> dupEmailCheck(@RequestBody DupRequestCheck requestCheck) {
+//        if(userService.dupCheckEmail(requestCheck)){
+//            return ResponseUtil.errorResponse(ErrorCode.EXIST_EMAIL);
+//        }
+//        return ResponseUtil.successResponse(SuccessCode.AVAILABLE_EMAIL);
+//    }
+//
+//    @PostMapping("/dupNick")
+//    public ResponseEntity<?> dupNickCheck(@RequestBody DupRequestCheck requestCheck) {
+//        if(userService.dupCheckNick(requestCheck)){
+//            return ResponseUtil.errorResponse(ErrorCode.EXIST_NICKNAME);
+//        }
+//        return ResponseUtil.successResponse(SuccessCode.AVAILABLE_NICKNAME);
+//    }
 
 }

@@ -69,6 +69,7 @@ public class UserService {
         // nickname 값에 해당하는 refreshToken 을 DB 에서 가져옴
         Optional<RefreshToken> refreshToken = refreshTokenRepository.findByUserNickname(user.getNickname());
 
+        // isPresent() 메소드는 Optional 객체의 값이 null 인지 여부
         if (refreshToken.isPresent()) {
             refreshTokenRepository.save(refreshToken.get().updateToken(tokenDto.getRefreshToken()));
         } else {
@@ -79,6 +80,8 @@ public class UserService {
         setHeader(response, tokenDto);
 
     }
+
+
 
     public ResponseEntity<TestDto> dupCheckEmail(DupRequestCheck requestCheck) {
         if (userRepository.existsByEmail(requestCheck.getEmail())) {
