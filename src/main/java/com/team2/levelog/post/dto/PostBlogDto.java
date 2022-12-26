@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -18,19 +20,19 @@ public class PostBlogDto {
     private String title;
     private String content;
     private String nickname;
-    private String imageUrl;
     private int likeCnt;
     private int cmtCnt;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
+    private List<ImageResponseDto> imageList = new ArrayList<>();
 
-    public PostBlogDto(Post post, Image image){
+    public PostBlogDto(Post post, List<ImageResponseDto> images){
         this.id           =     post.getId();
         this.title        =     post.getTitle();
         this.content      =     post.getContent();
         this.likeCnt      =     post.getCount();
         this.cmtCnt       =     post.getCommentList().size();
-        this.imageUrl     =     image.getImageFile();
+        this.imageList    =     images;
         this.nickname     =     post.getUser().getNickname();
         this.createdAt    =     post.getCreatedAt();
         this.modifiedAt   =     post.getModifiedAt();
