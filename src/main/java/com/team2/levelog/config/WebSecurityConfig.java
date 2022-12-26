@@ -86,13 +86,14 @@ public class WebSecurityConfig {
 
         CorsConfiguration config = new CorsConfiguration();
 
-        config.addAllowedOrigin("http://localhost:3000");
-//        config.addAllowedMethod("*");
-        config.addAllowedMethod("GET");
-        config.addAllowedMethod("POST");
-        config.addAllowedMethod("DELETE");
-        config.addAllowedMethod("OPTIONS");
-        config.addExposedHeader("*");
+
+//        config.addAllowedOrigin("http://localhost:3000");
+        config.addAllowedOriginPattern("*");
+        config.addAllowedOrigin("http://**");
+        config.setAllowCredentials(true);
+        config.addAllowedMethod("*");
+        config.addAllowedHeader("*");
+        config.addExposedHeader("Authorization"); // ********
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
