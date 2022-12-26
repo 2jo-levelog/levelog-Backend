@@ -83,8 +83,7 @@ public class UserService {
     }
 
     public UserInfoDto getUserInfo(User user){
-
-        return new UserInfoDto()
+        return new UserInfoDto(user.getEmail(), user.getNickname(), user.getThumbImg());
     }
 
 }
