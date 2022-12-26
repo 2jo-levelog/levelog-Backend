@@ -29,7 +29,7 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
     // H2 DB
-    runtimeOnly 'com.h2database:h2'
+//    runtimeOnly 'com.h2database:h2'
 
     // Spring Security
     implementation 'org.springframework.boot:spring-boot-starter-security'
@@ -44,6 +44,9 @@ dependencies {
 
     // MySQL
     implementation group: 'com.mysql', name: 'mysql-connector-j', version: '8.0.31'
+
+    // S3
+    implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-aws', version: '2.2.5.RELEASE'
 }
 
 tasks.named('test') {
