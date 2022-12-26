@@ -58,6 +58,7 @@ public class WebSecurityConfig {
                 .authorizeRequests()
                 .antMatchers(HttpMethod.GET).permitAll()
                 .antMatchers("/api/auth/**", "/images").permitAll()
+                .requestMatchers(CorsUtils::isPreFlightRequest).permitAll() // cors1
                 .anyRequest().authenticated()
 
                 // corsConfigurationSource 적용
@@ -86,7 +87,11 @@ public class WebSecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         config.addAllowedOrigin("http://localhost:3000");
-        config.addAllowedMethod("*");
+//        config.addAllowedMethod("*");
+        config.addAllowedMethod("GET");
+        config.addAllowedMethod("POST");
+        config.addAllowedMethod("DELETE");
+        config.addAllowedMethod("OPTIONS");
         config.addExposedHeader("*");
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
