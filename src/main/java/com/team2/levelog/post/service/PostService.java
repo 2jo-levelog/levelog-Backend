@@ -61,7 +61,10 @@ public class PostService {
         List<PostMainPageDto> postMainPageDtoList = new ArrayList<>();
         for(Post post : postList){
             // postList에 담긴 데이터들을 하나씩 Dto 리스트에 담아줌
-            postMainPageDtoList.add(new PostMainPageDto(post));
+            List<Image> imageList = imageRepository.findByPost(post);
+            for (Image image : imageList) {
+                postMainPageDtoList.add(new PostMainPageDto(post, image));
+            }
         }
         return postMainPageDtoList;
     }
@@ -71,7 +74,10 @@ public class PostService {
         List<Post> postList = postRepository.findAllByUserId(id);
         List<PostBlogDto> postBlogDtoList = new ArrayList<>();
         for (Post post : postList) {
-            postBlogDtoList.add(new PostBlogDto(post));
+            List<Image> imageList = imageRepository.findByPost(post);
+            for (Image image : imageList) {
+                postBlogDtoList.add(new PostBlogDto(post, image));
+            }
         }
         return postBlogDtoList;
     }
@@ -82,6 +88,7 @@ public class PostService {
         Post post = postRepository.findById(id).orElseThrow(
                 ()-> new CustomException(ErrorCode.POST_NOT_FOUND)
         );
+        Image image = imageRepository.findByPostId(post.getId());
         List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
         for (Comment comment : post.getCommentList()) {
             List<CommentResponseDto> childCommentList = new ArrayList<>();
@@ -94,7 +101,7 @@ public class PostService {
                 commentResponseDtoList.add(new CommentResponseDto(comment,childCommentList));
             }
         }
-        return new PostResponseDto(post, commentResponseDtoList);
+        return new PostResponseDto(post, image, commentResponseDtoList);
     }
 
     // 포스트 수정

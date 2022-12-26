@@ -1,5 +1,6 @@
 package com.team2.levelog.post.dto;
 
+import com.team2.levelog.image.entity.Image;
 import com.team2.levelog.post.entity.Post;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,17 +18,19 @@ public class PostBlogDto {
     private String title;
     private String content;
     private String nickname;
+    private String imageUrl;
     private int likeCnt;
     private int cmtCnt;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 
-    public PostBlogDto(Post post){
+    public PostBlogDto(Post post, Image image){
         this.id           =     post.getId();
         this.title        =     post.getTitle();
         this.content      =     post.getContent();
         this.likeCnt      =     post.getCount();
         this.cmtCnt       =     post.getCommentList().size();
+        this.imageUrl     =     image.getImageFile();
         this.nickname     =     post.getUser().getNickname();
         this.createdAt    =     post.getCreatedAt();
         this.modifiedAt   =     post.getModifiedAt();
