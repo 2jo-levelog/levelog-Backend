@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -17,6 +18,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import javax.servlet.http.HttpSession;
@@ -60,7 +62,7 @@ public class WebSecurityConfig {
 
                 // corsConfigurationSource 적용
                 .and()
-                .cors()
+                .cors()             // cors2
 
                 .and()
                 .logout()
@@ -79,30 +81,52 @@ public class WebSecurityConfig {
     }
 
     // CORS 이슈
+//    @Bean
+//    public CorsConfigurationSource corsConfigurationSource() {
+//
+//        CorsConfiguration config = new CorsConfiguration();
+//
+//        // 접근 가능한 출처
+//        config.addAllowedOrigin("http://localhost:3000");
+//
+//        // 클라이언트가 접근 가능한 헤더 지정 (토큰 사용 가능하게)
+//        config.addExposedHeader(JwtUtil.AUTHORIZATION_HEADER);
+//
+//        // 본 요청에 허용할 HTTP method
+//        config.addAllowedMethod("*");
+//
+//        // 본 요청에 허용할 HTTP header
+//        config.addExposedHeader("*");
+//
+//        // 브라우저에서 인증 관련 정보들을 요청에 담을 수 있도록 허가
+//        config.setAllowCredentials(true);
+//
+//        // allowedOrigin 의 값이 * (즉, 모두 허용)이 설정될 수 없도록 검증
+//        config.validateAllowCredentials();
+//
+//        // 설정을 적용할 경로 지정
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**", config);
+//
+//        return source;
+//    }
+
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
 
         CorsConfiguration config = new CorsConfiguration();
 
-        // 접근 가능한 출처
         config.addAllowedOrigin("http://localhost:3000");
-
-        // 클라이언트가 접근 가능한 헤더 지정 (토큰 사용 가능하게)
-        config.addExposedHeader(JwtUtil.AUTHORIZATION_HEADER);
-
-        // 본 요청에 허용할 HTTP method
+//        config.addAllowedOriginPattern("*");
+//        config.addAllowedMethod("GET");
+//        config.addAllowedMethod("PUT");
+//        config.addAllowedMethod("POST");
+//        config.addAllowedMethod("DELETE");
+//        config.addAllowedMethod("OPTIONS");
+//        config.addAllowedMethod("PATCH");
         config.addAllowedMethod("*");
-
-        // 본 요청에 허용할 HTTP header
         config.addExposedHeader("*");
-        
-        // 브라우저에서 인증 관련 정보들을 요청에 담을 수 있도록 허가
-        config.setAllowCredentials(true);
 
-        // allowedOrigin 의 값이 * (즉, 모두 허용)이 설정될 수 없도록 검증
-        config.validateAllowCredentials();
-
-        // 설정을 적용할 경로 지정
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
 
