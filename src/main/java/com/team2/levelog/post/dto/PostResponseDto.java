@@ -23,11 +23,11 @@ public class PostResponseDto {
     private String title;
     private String content;
     private String nickname;
-    private String imageUrl;
     private int cmtCnt;
     private int likeCnt;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
+    private List<ImageResponseDto> imageList = new ArrayList<>();
     private List<CommentResponseDto> commentList = new ArrayList<>();        //댓글 리스트
 
 
@@ -43,12 +43,12 @@ public class PostResponseDto {
         this.commentList  =     commentResponseDtos;
     }
 
-    public PostResponseDto(Post post, Image image, List<CommentResponseDto> commentResponseDtos){
+    public PostResponseDto(Post post, List<ImageResponseDto> images, List<CommentResponseDto> commentResponseDtos){
         this.id           =     post.getId();
         this.title        =     post.getTitle();
         this.content      =     post.getContent();
         this.nickname     =     post.getUser().getNickname();
-        this.imageUrl     =     image.getImageFile();
+        this.imageList    =     images;
         this.cmtCnt       =     post.getCommentList().size();
         this.likeCnt      =     post.getCount();
         this.createdAt    =     post.getCreatedAt();
