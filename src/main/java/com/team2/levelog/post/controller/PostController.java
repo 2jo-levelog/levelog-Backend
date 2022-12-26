@@ -49,11 +49,6 @@ public class PostController {
         return ResponseUtil.successResponse(postService.getMainPage());
     }
 
-//    @PostMapping("/users/{id}/posts/write")
-//    public ResponseEntity<?> addPost(@RequestBody PostRequestDto postRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
-//        return ResponseUtil.successResponse(postService.addPost(postRequestDto, userDetails.getUser()));
-//    }
-
     @GetMapping("/users/{id}/posts")
     public ResponseEntity<?> getPosts(@PathVariable Long id){
         return ResponseUtil.successResponse(postService.getPosts(id));

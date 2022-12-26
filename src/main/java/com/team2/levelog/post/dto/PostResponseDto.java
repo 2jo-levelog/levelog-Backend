@@ -1,6 +1,7 @@
 package com.team2.levelog.post.dto;
 
 import com.team2.levelog.comment.dto.CommentResponseDto;
+import com.team2.levelog.image.entity.Image;
 import com.team2.levelog.post.entity.Likes;
 import com.team2.levelog.post.entity.Post;
 import com.team2.levelog.post.repository.LikesRepository;
@@ -22,6 +23,7 @@ public class PostResponseDto {
     private String title;
     private String content;
     private String nickname;
+    private String imageUrl;
     private int cmtCnt;
     private int likeCnt;
     private LocalDateTime createdAt;
@@ -40,6 +42,20 @@ public class PostResponseDto {
         this.modifiedAt   =     post.getModifiedAt();
         this.commentList  =     commentResponseDtos;
     }
+
+    public PostResponseDto(Post post, Image image, List<CommentResponseDto> commentResponseDtos){
+        this.id           =     post.getId();
+        this.title        =     post.getTitle();
+        this.content      =     post.getContent();
+        this.nickname     =     post.getUser().getNickname();
+        this.imageUrl     =     image.getImageFile();
+        this.cmtCnt       =     post.getCommentList().size();
+        this.likeCnt      =     post.getCount();
+        this.createdAt    =     post.getCreatedAt();
+        this.modifiedAt   =     post.getModifiedAt();
+        this.commentList  =     commentResponseDtos;
+    }
+
     public PostResponseDto(Post post){
         this.id           =     post.getId();
         this.title        =     post.getTitle();
