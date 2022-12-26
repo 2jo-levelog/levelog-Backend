@@ -19,8 +19,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import javax.servlet.http.HttpSession;
-
 // 1. 기능   : Spring Security 설정
 // 2. 작성자 : 서혁수
 @Configuration
@@ -88,7 +86,7 @@ public class WebSecurityConfig {
         config.addAllowedOrigin("http://localhost:3000");
 
         // 클라이언트가 접근 가능한 헤더 지정 (토큰 사용 가능하게)
-        config.addExposedHeader(JwtUtil.AUTHORIZATION_HEADER);
+        config.addExposedHeader(JwtUtil.AC_TOKEN);
 
         // 본 요청에 허용할 HTTP method
         config.addAllowedMethod("*");
