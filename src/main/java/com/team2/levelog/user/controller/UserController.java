@@ -52,4 +52,9 @@ public class UserController {
         return ResponseUtil.successResponse(SuccessCode.AVAILABLE_NICKNAME);
     }
 
+    @GetMapping("/userInfo")
+    public ResponseEntity<?> getUserInfo(@AuthenticationPrincipal UserDetailsImpl userDetails){
+        return ResponseUtil.successResponse(userService.getUserInfo(userDetails.getUser()));
+    }
+
 }

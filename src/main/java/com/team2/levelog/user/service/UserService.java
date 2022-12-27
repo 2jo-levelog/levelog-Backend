@@ -8,6 +8,7 @@ import com.team2.levelog.global.jwt.JwtUtil;
 import com.team2.levelog.user.dto.DupRequestCheck;
 import com.team2.levelog.user.dto.SigninRequestDto;
 import com.team2.levelog.user.dto.SignUpRequestDto;
+import com.team2.levelog.user.dto.UserInfoDto;
 import com.team2.levelog.user.entity.User;
 import com.team2.levelog.user.entity.UserRoleEnum;
 import com.team2.levelog.user.repository.UserRepository;
@@ -80,4 +81,9 @@ public class UserService {
     public void deleteUser(User user) {
 
     }
+
+    public UserInfoDto getUserInfo(User user){
+        return new UserInfoDto(user.getEmail(), user.getNickname(), user.getThumbImg());
+    }
+
 }
