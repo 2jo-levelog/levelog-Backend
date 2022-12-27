@@ -1,5 +1,6 @@
 package com.team2.levelog.user.controller;
 
+import com.team2.levelog.global.Email.EmailService;
 import com.team2.levelog.global.GlobalResponse.ResponseUtil;
 import com.team2.levelog.global.GlobalResponse.code.ErrorCode;
 import com.team2.levelog.global.GlobalResponse.code.SuccessCode;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.util.Map;
 
 // 1. 기능   : 회원 관련 종합 컨트롤러
 // 2. 작성자 : 서혁수
@@ -23,6 +25,7 @@ import javax.validation.Valid;
 @RequestMapping("/api/auth")
 public class UserController {
     private final UserService userService;
+    private final EmailService emailService;
 
     @PostMapping("/signUp")
     public ResponseEntity<?> signUp(@RequestBody @Valid SignUpRequestDto signUpRequestDto) {
@@ -51,5 +54,14 @@ public class UserController {
         }
         return ResponseUtil.successResponse(SuccessCode.AVAILABLE_NICKNAME);
     }
+
+    @PostMapping("/emailAuth")
+    public ResponseEntity<?> emailConfirm(@RequestBody Map<String, String> email) throws Exception {
+
+        emailService.sendSimpleMessage(email.get("email"));
+
+        return ResponseUtil.successResponse(SuccessCode.SIGNUP_OK);
+    }
+
 
 }
