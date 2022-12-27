@@ -10,7 +10,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PostRequestDto {
-    private String title;
-    private String content;
+    private String title;                        // 포스트 타이틀
+    private String content;                      // 포스트 내용
     private List<ImageResponseDto> imageDtos;
 }

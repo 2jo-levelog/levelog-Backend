@@ -16,14 +16,14 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PostMainPageDto {
-    private Long id;
-    private String title;
-    private String content;
-    private String nickname;
-    private int likeCnt;
-    private LocalDateTime createdAt;
-    private LocalDateTime modifiedAt;
-    private List<ImageResponseDto> imageList = new ArrayList<>();
+    private Long id;                                                       // 고유 ID
+    private String title;                                                  // 게시글 타이틀
+    private String content;                                                // 게시글 내용
+    private String nickname;                                               // 작성자 닉네임
+    private int likeCnt;                                                   // 좋아요 갯수
+    private LocalDateTime createdAt;                                       // 작성 시간
+    private LocalDateTime modifiedAt;                                      // 수정 시간
+    private List<ImageResponseDto> imageList = new ArrayList<>();          // 이미지 리스트
 
     public PostMainPageDto(Post post, List<ImageResponseDto> images){
         this.id           =     post.getId();
