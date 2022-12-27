@@ -6,6 +6,7 @@ import com.team2.levelog.global.GlobalResponse.code.SuccessCode;
 import com.team2.levelog.global.TestDto;
 import com.team2.levelog.global.jwt.JwtUtil;
 import com.team2.levelog.image.repository.ImageRepository;
+import com.team2.levelog.image.service.S3Service;
 import com.team2.levelog.post.repository.LikesRepository;
 import com.team2.levelog.post.repository.PostRepository;
 import com.team2.levelog.user.dto.DupRequestCheck;
@@ -19,8 +20,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 // 1. 기능   : 유저 서비스
 // 2. 작성자 : 서혁수
@@ -33,9 +37,11 @@ public class UserService {
     private final PostRepository postRepository;
     private final LikesRepository likesRepository;
     private final JwtUtil jwtUtil;
+    private final S3Service s3Service;
 
     // 회원가입
-    public void signUp(SignUpRequestDto requestDto) {
+    @Transactional
+    public void signUp(SignUpRequestDto requestDto, MultipartFile multipartFile) throws IOException {
         // 1. 중복 여부 검사
         if (userRepository.existsByEmail(requestDto.getEmail())) {
             throw new CustomException(ErrorCode.EXIST_EMAIL);
@@ -46,7 +52,9 @@ public class UserService {
 
         String encodePassword = passwordEncoder.encode(requestDto.getPassword());
 
-        User user = new User(requestDto.getEmail(), requestDto.getNickname(), encodePassword, requestDto.getProfileImg(), UserRoleEnum.USER);
+        String imgUrl = s3Service.uploadOne(multipartFile);
+
+        User user = new User(requestDto.getEmail(), requestDto.getNickname(), encodePassword, imgUrl, UserRoleEnum.USER);
         userRepository.save(user);
     }
 

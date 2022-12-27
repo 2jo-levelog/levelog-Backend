@@ -9,12 +9,15 @@ import com.team2.levelog.user.dto.SigninRequestDto;
 import com.team2.levelog.user.dto.SignUpRequestDto;
 import com.team2.levelog.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.IOException;
 
 // 1. 기능   : 회원 관련 종합 컨트롤러
 // 2. 작성자 : 서혁수
@@ -24,9 +27,11 @@ import javax.validation.Valid;
 public class UserController {
     private final UserService userService;
 
-    @PostMapping("/signUp")
-    public ResponseEntity<?> signUp(@RequestBody @Valid SignUpRequestDto signUpRequestDto) {
-        userService.signUp(signUpRequestDto);
+    @PostMapping(value = "/signUp", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<?> signUp(
+            @RequestPart(value = "key") @Valid SignUpRequestDto signUpRequestDto,
+            @RequestPart(value = "multipartFile") MultipartFile multipartFile) throws IOException {
+        userService.signUp(signUpRequestDto, multipartFile);
         return ResponseUtil.successResponse(SuccessCode.SIGNUP_OK);
     }
 
