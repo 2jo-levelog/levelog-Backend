@@ -60,6 +60,7 @@ public class WebSecurityConfig {
                 .and()
                 .cors()
 
+                // 시큐리티 자체 지원 로그아웃 기능
                 .and()
                 .logout()
                 .logoutUrl("/api/auth/logout")
@@ -71,8 +72,6 @@ public class WebSecurityConfig {
                 .addFilterBefore(new JwtAuthFilter(jwtUtil),
                         UsernamePasswordAuthenticationFilter.class);
 
-
-
         return http.build();
     }
 
@@ -83,24 +82,22 @@ public class WebSecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         // 접근 가능한 출처
-        config.addAllowedOrigin("http://localhost:3000");
+        // config.addAllowedOrigin("http://localhost:3000");
+        config.addAllowedOriginPattern("*");
+        config.addAllowedOrigin("http://**");
 
-        // 클라이언트가 접근 가능한 헤더 지정 (토큰 사용 가능하게)
-        config.addExposedHeader(JwtUtil.AC_TOKEN);
+        // 브라우저에서 인증 관련 정보들을 요청에 담을 수 있도록 허가
+        config.setAllowCredentials(true);
 
         // 본 요청에 허용할 HTTP method
         config.addAllowedMethod("*");
 
         // 본 요청에 허용할 HTTP header
-        config.addExposedHeader("*");
-        
-        // 브라우저에서 인증 관련 정보들을 요청에 담을 수 있도록 허가
-        config.setAllowCredentials(true);
+        config.addAllowedHeader("*");
 
-        // allowedOrigin 의 값이 * (즉, 모두 허용)이 설정될 수 없도록 검증
-        config.validateAllowCredentials();
+        // 클라이언트가 접근 가능한 헤더 지정 (토큰 사용 가능하게)
+        config.addExposedHeader("Authorization"); // ********
 
-        // 설정을 적용할 경로 지정
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
 

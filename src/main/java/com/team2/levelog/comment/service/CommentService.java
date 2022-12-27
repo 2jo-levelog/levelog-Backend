@@ -8,12 +8,9 @@ import com.team2.levelog.global.GlobalResponse.code.ErrorCode;
 import com.team2.levelog.post.entity.Post;
 import com.team2.levelog.post.repository.PostRepository;
 import com.team2.levelog.user.entity.User;
-import com.team2.levelog.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import static com.team2.levelog.global.GlobalResponse.code.ErrorCode.NO_ACCESS;
 
 @Service
 @RequiredArgsConstructor

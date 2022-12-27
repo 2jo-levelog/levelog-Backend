@@ -1,9 +1,7 @@
 package com.team2.levelog.post.dto;
 
 import com.team2.levelog.comment.dto.CommentResponseDto;
-import com.team2.levelog.post.entity.Likes;
 import com.team2.levelog.post.entity.Post;
-import com.team2.levelog.post.repository.LikesRepository;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

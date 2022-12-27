@@ -1,10 +1,8 @@
 package com.team2.levelog.global.jwt;
 
-import com.team2.levelog.global.GlobalResponse.CustomException;
 import com.team2.levelog.global.security.UserDetailsServiceImpl;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-import io.jsonwebtoken.security.SecurityException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -17,6 +15,7 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
@@ -36,7 +35,7 @@ public class JwtUtil {
 
     // 만료시간
     private static final long AC_TOKEN_TIME = 30 * 1 * 1000L;
-    private static final long RS_TOKEN_TIME = 10 * 1 * 1000L;
+    private static final long RS_TOKEN_TIME = 60 * 60 * 1000L;
 
     // 시크릿 키
     @Value("${jwt.secret.key}")
@@ -104,7 +103,7 @@ public class JwtUtil {
         } catch (SecurityException | MalformedJwtException e) {
             log.info("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.");
         } catch (ExpiredJwtException e) {
-            log.info("Expired JWT token, 만료된 JWT token 입니다.");
+            return false;
         } catch (UnsupportedJwtException e) {
             log.info("Unsupported JWT token, 지원되지 않는 JWT 토큰 입니다.");
         } catch (IllegalArgumentException e) {
@@ -144,5 +143,14 @@ public class JwtUtil {
     // 토큰에서 사용자 정보 가져오기
     public Claims getUserInfoFromToken(String token) {
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+    }
+
+    // RefreshToken 존재 유무 확인
+    public boolean existRsToken(String rsToken) {
+        return refreshTokenRepository.existsByRefreshToken(rsToken);
+    }
+
+    public void setHeaderAcToken(HttpServletResponse response, String acToken) {
+        response.setHeader(AC_TOKEN, acToken);
     }
 }

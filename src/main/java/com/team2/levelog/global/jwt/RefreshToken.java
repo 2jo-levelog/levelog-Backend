@@ -17,6 +17,9 @@ public class RefreshToken {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // 참고 블로그 : https://sanghye.tistory.com/36
+    // @NotBlank 는 null 과, "", " " 모두 허용하지 않는다.
+    // null 값 비허용에 있어서 가장 강한 비허용의 방법이다.
     @NotBlank
     private String refreshToken;
 

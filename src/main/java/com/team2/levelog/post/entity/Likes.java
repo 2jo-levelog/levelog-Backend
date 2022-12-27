@@ -1,6 +1,5 @@
 package com.team2.levelog.post.entity;
 
-import com.team2.levelog.post.entity.Post;
 import com.team2.levelog.user.entity.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

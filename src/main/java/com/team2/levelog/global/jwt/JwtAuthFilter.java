@@ -1,18 +1,9 @@
 package com.team2.levelog.global.jwt;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.team2.levelog.global.GlobalResponse.CustomException;
-import com.team2.levelog.global.GlobalResponse.GlobalResponseDto;
-import com.team2.levelog.global.GlobalResponse.ResponseUtil;
-import com.team2.levelog.global.GlobalResponse.code.ErrorCode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.team2.levelog.global.TestDto;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -40,9 +31,26 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         // 2. 토큰 유효 판별
         // accessToken null 이면 rsToken 을 발급받는 식이다.
         if(acToken != null) {
-            if(!jwtUtil.validateToken(acToken)){
+            if (!jwtUtil.validateToken(acToken) && rsToken != null) {
+                // 리프레스 토큰 검증
+                boolean validRsToken = jwtUtil.validateToken(rsToken);
+                // 리프레시 토큰 존재여부 확인
+                boolean isRsToken = jwtUtil.existRsToken("Bearer " + rsToken);
+                // 위 두가지 검증과정을 모두 만족시 로그아웃 없이
+                if (validRsToken && isRsToken) {
+                    Claims claims = jwtUtil.getUserInfoFromToken(rsToken);
+                    String newToken = jwtUtil.createToken((String) claims.get("userEmail"),(String) claims.get("nickname"));
+                    String cut = newToken.substring(7);
+                    setAuthentication(jwtUtil.getNickInfoFromToken(cut));
+                    filterChain.doFilter(request, response);
+                    return;
+                }
+            } else if (!jwtUtil.validateToken(acToken)) {
                 throw new IllegalArgumentException("Access Token Error");
             }
+//            if(!jwtUtil.validateToken(acToken)){
+//                throw new IllegalArgumentException("Access Token Error");
+//            }
             // 3. 토큰이 유효하다면 토큰에서 정보를 가져와 Authentication 에 세팅
             setAuthentication(jwtUtil.getNickInfoFromToken(acToken));
         } else if (rsToken != null) {

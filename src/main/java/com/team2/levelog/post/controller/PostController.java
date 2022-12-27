@@ -4,11 +4,7 @@ import com.team2.levelog.global.GlobalResponse.ResponseUtil;
 import com.team2.levelog.global.GlobalResponse.code.SuccessCode;
 import com.team2.levelog.global.security.UserDetailsImpl;
 import com.team2.levelog.image.service.S3Service;
-import com.team2.levelog.post.dto.PostLikesResponseDto;
-import com.team2.levelog.post.dto.PostBlogDto;
-import com.team2.levelog.post.dto.PostMainPageDto;
 import com.team2.levelog.post.dto.PostRequestDto;
-import com.team2.levelog.post.dto.PostResponseDto;
 import com.team2.levelog.post.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -31,7 +27,7 @@ public class PostController {
     private final S3Service s3Service;
 
     // S3 업데이트 이후 사용할 맵핑
-    @PostMapping ("/users/{id}/posts/write")
+    @PostMapping ("/posts/write")
     public ResponseEntity<?> addPost(
             @RequestPart(value = "key") PostRequestDto postRequestDto,
             @RequestPart(value = "multipartFile") List<MultipartFile> multipartFiles,

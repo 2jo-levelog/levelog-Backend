@@ -1,8 +1,5 @@
 package com.team2.levelog.user.service;
 
-import com.team2.levelog.global.GlobalResponse.CustomException;
-import com.team2.levelog.global.GlobalResponse.code.ErrorCode;
-import com.team2.levelog.global.GlobalResponse.code.SuccessCode;
 import com.team2.levelog.global.TestDto;
 import com.team2.levelog.global.jwt.JwtUtil;
 import com.team2.levelog.global.jwt.RefreshToken;
@@ -81,8 +78,13 @@ public class UserService {
 
     }
 
+    // 토큰 재발행 (전역으로 사용)
+    public ResponseEntity<TestDto> issuedToken(String email, String nickname, HttpServletResponse response) {
+        response.addHeader(JwtUtil.AC_TOKEN, jwtUtil.createToken(email, nickname));
+        return ResponseEntity.ok().body(new TestDto(200, "토근 재발행 완료"));
+    }
 
-
+    // 중복 이메일 체크
     public ResponseEntity<TestDto> dupCheckEmail(DupRequestCheck requestCheck) {
         if (userRepository.existsByEmail(requestCheck.getEmail())) {
             return ResponseEntity.badRequest().body(new TestDto(400, "중복 이메일 존재"));
@@ -91,6 +93,7 @@ public class UserService {
         }
     }
 
+    // 중복 닉네임 체크
     public ResponseEntity<TestDto> dupCheckNick(DupRequestCheck requestCheck) {
         if (userRepository.existsByNickname(requestCheck.getNickname())) {
             return ResponseEntity.badRequest().body(new TestDto(400, "중복 닉네임 존재"));
@@ -99,9 +102,28 @@ public class UserService {
         }
     }
 
+    // Http 헤더에 토큰값 지정
     public void setHeader(HttpServletResponse response, TokenDto tokenDto) {
         response.addHeader(JwtUtil.AC_TOKEN, tokenDto.getAccessToken());
         response.addHeader(JwtUtil.RS_TOKEN, tokenDto.getRefreshToken());
+    }
+
+    // 로그아웃
+    @Transactional
+    public ResponseEntity<TestDto> signOut(String nickname) {
+        // 해당 유저의 refreshToken 이 없을 경우
+        if (refreshTokenRepository.findByUserNickname(nickname).isEmpty()) {
+            return ResponseEntity.badRequest().body(new TestDto(400, "로그인을 해주세요."));
+        }
+        // 자신의 refreshToken 만 삭제 가능
+        // 해당 유저의 토큰으로 부터 닉네임을 가져오는 코드
+        String findNick = refreshTokenRepository.findByUserNickname(nickname).get().getUserNickname();
+        if (nickname.equals(findNick)) {
+            refreshTokenRepository.deleteByUserNickname(nickname);
+            return ResponseEntity.ok().body(new TestDto(200, "로그아웃 완료"));
+        } else {
+            return ResponseEntity.accepted().body(new TestDto(401, "삭제 권한이 없습니다."));
+        }
     }
 
     // 회원탈퇴

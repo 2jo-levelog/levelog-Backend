@@ -8,21 +8,19 @@ import com.team2.levelog.global.GlobalResponse.CustomException;
 import com.team2.levelog.global.GlobalResponse.code.ErrorCode;
 import com.team2.levelog.image.entity.Image;
 import com.team2.levelog.image.repository.ImageRepository;
-import com.team2.levelog.post.dto.PostLikesResponseDto;
-import com.team2.levelog.post.dto.*;
 import com.team2.levelog.post.entity.Likes;
-import com.team2.levelog.post.repository.LikesRepository;
 import com.team2.levelog.post.entity.Post;
+import com.team2.levelog.post.repository.LikesRepository;
 import com.team2.levelog.post.repository.PostRepository;
+import com.team2.levelog.post.dto.*;
+import com.team2.levelog.post.dto.PostLikesResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import com.team2.levelog.user.entity.User;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.imageio.ImageReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 // 1. 기능      :   Post 관련 모든 비즈니스 로직
 // 2. 작성자     :   홍윤재
