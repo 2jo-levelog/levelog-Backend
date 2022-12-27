@@ -55,10 +55,11 @@ public class UserController {
         return ResponseUtil.successResponse(SuccessCode.AVAILABLE_NICKNAME);
     }
 
-    @PostMapping("/emailAuth")
-    public ResponseEntity<?> emailConfirm(@RequestBody Map<String, String> email) throws Exception {
+    @PostMapping("/signUp")
+    public ResponseEntity<?> emailSignUp(@RequestBody @Valid SignUpRequestDto signUpRequestDto) throws Exception {
 
-        emailService.sendSimpleMessage(email.get("email"));
+        userService.emailSignUp(signUpRequestDto);
+        emailService.sendSimpleMessage(signUpRequestDto.getEmail());
 
         return ResponseUtil.successResponse(SuccessCode.SIGNUP_OK);
     }

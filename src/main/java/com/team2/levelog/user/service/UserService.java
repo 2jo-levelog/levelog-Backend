@@ -41,6 +41,7 @@ public class UserService {
         String encodePassword = passwordEncoder.encode(requestDto.getPassword());
 
         User user = new User(requestDto.getEmail(), requestDto.getNickname(), encodePassword, requestDto.getProfileImg(), UserRoleEnum.USER);
+
         userRepository.save(user);
     }
 
@@ -79,5 +80,22 @@ public class UserService {
     // 회원탈퇴
     public void deleteUser(User user) {
 
+    }
+
+    // 이메일인증 회원가입
+    public void emailSignUp(SignUpRequestDto requestDto) {
+        // 1. 중복 여부 검사
+        if (userRepository.existsByEmail(requestDto.getEmail())) {
+            throw new CustomException(ErrorCode.EXIST_EMAIL);
+        }
+        if (userRepository.existsByNickname(requestDto.getNickname())) {
+            throw new CustomException(ErrorCode.EXIST_NICKNAME);
+        }
+
+        String encodePassword = passwordEncoder.encode(requestDto.getPassword());
+
+        User user = new User(requestDto.getEmail(), requestDto.getNickname(), encodePassword, requestDto.getProfileImg(), UserRoleEnum.USER);
+
+        userRepository.save(user);
     }
 }

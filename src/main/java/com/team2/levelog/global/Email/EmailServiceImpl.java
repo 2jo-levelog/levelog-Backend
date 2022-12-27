@@ -16,7 +16,7 @@ import static com.team2.levelog.global.GlobalResponse.code.ErrorCode.FAIL_SEND_E
 @Service
 public class EmailServiceImpl implements EmailService{
 
-    @Autowired                                                      // 의존성 주입
+    @Autowired                                                      // 의존성 주입. 필요한 의존 객체의 “타입"에 해당하는 빈을 찾아 주입한다.
     JavaMailSender emailSender;
 
     public static final String ePw = createKey();                   // 인증코드 생성해서 대입
