@@ -15,6 +15,9 @@ import com.team2.levelog.post.repository.LikesRepository;
 import com.team2.levelog.post.entity.Post;
 import com.team2.levelog.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import com.team2.levelog.user.entity.User;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,9 +57,9 @@ public class PostService {
 
     // 메인페이지 게시글 보기
     @Transactional
-    public List<PostMainPageDto> getMainPage(){
+    public Page<PostMainPageDto> getMainPage(Pageable pageable){
         // 생성 시간 기준으로 모든 포스트 데이터를 DB -> postList 객체에 저장
-        List<Post> postList = postRepository.findAllByOrderByCreatedAtDesc();
+        Page<Post> postList = postRepository.findAll(pageable);
         // Dto 리스트 미리 선언
         List<PostMainPageDto> postMainPageDtoList = new ArrayList<>();
         for(Post post : postList){
@@ -67,12 +70,13 @@ public class PostService {
             }
             postMainPageDtoList.add(new PostMainPageDto(post, imageResponseDtoList));
         }
-        return postMainPageDtoList;
+        final Page<PostMainPageDto> page = new PageImpl<>(postMainPageDtoList);
+        return page;
     }
 
     // 개인 블로그 게시글 전체 보기
-    public List<PostBlogDto> getPosts(Long id) {
-        List<Post> postList = postRepository.findAllByUserId(id);
+    public Page<PostBlogDto> getPosts(String userNickname, Pageable pageable) {
+        Page<Post> postList = postRepository.findAllByNickname(userNickname, pageable);
         List<PostBlogDto> postBlogDtoList = new ArrayList<>();
         for (Post post : postList) {
             List<ImageResponseDto> imageResponseDtoList = new ArrayList<>();
@@ -81,7 +85,8 @@ public class PostService {
             }
             postBlogDtoList.add(new PostBlogDto(post, imageResponseDtoList));
         }
-        return postBlogDtoList;
+        final Page<PostBlogDto> page = new PageImpl<>(postBlogDtoList);
+        return page;
     }
 
     //개인 블로그 게시글 상세페이지

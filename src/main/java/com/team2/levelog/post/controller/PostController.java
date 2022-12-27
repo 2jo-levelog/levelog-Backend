@@ -11,6 +11,9 @@ import com.team2.levelog.post.dto.PostRequestDto;
 import com.team2.levelog.post.dto.PostResponseDto;
 import com.team2.levelog.post.service.PostService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -45,13 +48,13 @@ public class PostController {
     }
 
     @GetMapping("/main")
-    public ResponseEntity<?> getMainPage(){
-        return ResponseUtil.successResponse(postService.getMainPage());
+    public ResponseEntity<?> getMainPage(@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable){
+        return ResponseUtil.successResponse(postService.getMainPage(pageable));
     }
 
-    @GetMapping("/users/{id}/posts")
-    public ResponseEntity<?> getPosts(@PathVariable Long id){
-        return ResponseUtil.successResponse(postService.getPosts(id));
+    @GetMapping("/users/{userNickname}/posts")
+    public ResponseEntity<?> getPosts(@PathVariable String userNickname, @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable){
+        return ResponseUtil.successResponse(postService.getPosts(userNickname, pageable));
     }
 
     @GetMapping("/posts/{id}")
