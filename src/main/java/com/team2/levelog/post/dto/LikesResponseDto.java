@@ -5,9 +5,9 @@ import lombok.Getter;
 
 @Getter
 public class LikesResponseDto {
-    private Long likeId;
-    private Long postId;
-    private Long userId;
+    private Long likeId;     // 고유 ID
+    private Long postId;     // 포스트 ID
+    private Long userId;     // 작성자 ID
 
     public LikesResponseDto(Likes like) {
         this.likeId   =   like.getId();

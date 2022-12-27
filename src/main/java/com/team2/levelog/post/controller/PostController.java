@@ -4,11 +4,7 @@ import com.team2.levelog.global.GlobalResponse.ResponseUtil;
 import com.team2.levelog.global.GlobalResponse.code.SuccessCode;
 import com.team2.levelog.global.security.UserDetailsImpl;
 import com.team2.levelog.image.service.S3Service;
-import com.team2.levelog.post.dto.PostLikesResponseDto;
-import com.team2.levelog.post.dto.PostBlogDto;
-import com.team2.levelog.post.dto.PostMainPageDto;
 import com.team2.levelog.post.dto.PostRequestDto;
-import com.team2.levelog.post.dto.PostResponseDto;
 import com.team2.levelog.post.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -33,11 +29,11 @@ public class PostController {
     private final PostService postService;
     private final S3Service s3Service;
 
-    // S3 업데이트 이후 사용할 맵핑
+    // 포스트 업로드
     @PostMapping ("/posts/write")
     public ResponseEntity<?> addPost(
             @RequestPart(value = "key") PostRequestDto postRequestDto,
-            @RequestPart(value = "multipartFile") List<MultipartFile> multipartFiles,
+            @RequestPart(value = "multipartFile", required = false) List<MultipartFile> multipartFiles,
             @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
 
         if(multipartFiles==null) {
@@ -47,32 +43,41 @@ public class PostController {
         return ResponseEntity.ok(postService.addPost(postRequestDto, userDetails.getUser(), imageFiles));
     }
 
+    // 메인 페이지 게시글 리스트 불러오기
     @GetMapping("/main")
     public ResponseEntity<?> getMainPage(@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable){
         return ResponseUtil.successResponse(postService.getMainPage(pageable));
     }
 
+    // 회원 개인 페이지 게시글 리스트 불러오기
     @GetMapping("/users/{userNickname}/posts")
     public ResponseEntity<?> getPosts(@PathVariable String userNickname, @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable){
         return ResponseUtil.successResponse(postService.getPosts(userNickname, pageable));
     }
 
+    // 게시글 상세페이지
     @GetMapping("/posts/{id}")
     public ResponseEntity<?> getpost(@PathVariable Long id){
         return ResponseUtil.successResponse(postService.getPost(id));
     }
 
+    // 게시글 수정
     @PutMapping("/posts/{id}")
-    public ResponseEntity<?> updatePost(@PathVariable Long id, @RequestBody PostRequestDto postRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return ResponseUtil.successResponse(postService.updatePost(id, postRequestDto, userDetails.getUser()));
+    public ResponseEntity<?> updatePost(@PathVariable Long id,
+                                        @RequestPart(value = "key") PostRequestDto postRequestDto,
+                                        @RequestPart(value = "multipartFile", required = false) List<MultipartFile> multipartFiles,
+                                        @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
+        return ResponseUtil.successResponse(postService.updatePost(id, postRequestDto, userDetails.getUser(), multipartFiles));
     }
 
+    // 게시글 삭제
     @DeleteMapping("/posts/{id}")
     public ResponseEntity<?> deletePost(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         postService.deletePost(id, userDetails.getUser());
         return ResponseUtil.successResponse(SuccessCode.DELETE_OK);
     }
-    
+
+    // 게시글 좋아요
     @PostMapping("/posts/{id}/likes")
     public ResponseEntity<?> postlike(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseUtil.successResponse(postService.postLike(id, userDetails.getUser()));

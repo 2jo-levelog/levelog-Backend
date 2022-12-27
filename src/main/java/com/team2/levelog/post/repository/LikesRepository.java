@@ -9,9 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 public interface LikesRepository extends JpaRepository<Likes, Long> {
-    Optional<Likes> findAllByUserId(Long id);
     @Transactional
-    void deleteByPostAndUser(Post post, User user);
+    void deleteByPostAndUser(Post post, User user);                    // Post와 User 정보로 DB에서 좋아요 검색 후 삭제
 
     Optional<Likes> findByPostAndUser(Post post, User user)  ;
 
