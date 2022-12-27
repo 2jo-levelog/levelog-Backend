@@ -24,24 +24,23 @@ public class EmailConfig {
     @Value("${mail.smtp.auth}")
     private boolean auth;                   // 인증 필요 여부
     @Value("${mail.smtp.starttls.enable}")
-    private boolean starttls;
+    private boolean starttls;               // STARTTLS 지원 서버 경우 명령 실행 전 TLS 보호 연결로 전환 아니면 TLS 사용 않고 연결
     @Value("${mail.smtp.starttls.required}")
-    private boolean startlls_required;      // 메일 발송시 STARTTLS를 지원하는 서버면 STARTTLS를 이용해서 TLS 암호화 사용
+    private boolean startlls_required;      // 메일 발송시 STARTTLS를 지원하는 서버면 STARTTLS를 이용해서 TLS 암호화 사용 지원하지 않으면 연결 방법 실패
     @Value("${mail.smtp.socketFactory.fallback}")
-    private boolean fallback;               // fallback(대체)
+    private boolean fallback;               // fallback(대체) : 소캣 생성 실패시 java.net.Socket 클래스 이용해 소켓 생성할 건지 여부 선택
     @Value("${AdminMail.id}")     // 편지를 보내는 주체의 gmail주소 (example@gmail.com)
     private String id;
     @Value("${AdminMail.password}")             // 구글 메일 2단계 인증 앱 비밀번호 (일반 비밀번호 아님)
     private String password;
 
-    //
+    // 메일 보내는 서비스
     @Bean
     public JavaMailSender javaMailService() {
 
         // Mime메세지와 simpleMail메세지를 서포트하는 구현체
         JavaMailSenderImpl javaMailSender = new JavaMailSenderImpl();
 
-        // 메일 호스트 설정
         javaMailSender.setHost("smtp.gmail.com");                       // 메일 Host 설정
         javaMailSender.setUsername(id);
         javaMailSender.setPassword(password);

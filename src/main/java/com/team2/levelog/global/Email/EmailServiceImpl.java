@@ -16,19 +16,24 @@ import static com.team2.levelog.global.GlobalResponse.code.ErrorCode.FAIL_SEND_E
 @Service
 public class EmailServiceImpl implements EmailService{
 
-    @Autowired
+    @Autowired                                                      // 의존성 주입
     JavaMailSender emailSender;
 
-    public static final String ePw = createKey();
+    public static final String ePw = createKey();                   // 인증코드 생성해서 대입
 
+    // 메일 내용 설정
     private MimeMessage createMessage(String to)throws Exception{
-        System.out.println("보내는 대상 : "+ to);
+        System.out.println("보내는 대상 : "+ to);                    // 로그로 서버에서 확인
         System.out.println("인증 번호 : "+ePw);
+
         MimeMessage  message = emailSender.createMimeMessage();
 
-        message.addRecipients(Message.RecipientType.TO, to);    //  보내는 대상
-        message.setSubject("Babble회원가입 이메일 인증");        //  메일 제목
+        message.addRecipients(Message.RecipientType.TO, to);        //  보내는 대상
+        message.setSubject("Levelog 회원가입 이메일 인증");          //  메일 제목
 
+
+        // MailSender는 SimpleMailMessage를 정의해 텍스트 메일을 발송 할 수있는 반면,
+        // JavaMailSender에선 MimeMessage를 정의해 본문이 HTML로 이루어진 메일을 발송 가능
         // 보낼 메일 내용
         String msgg="";
         msgg+= "<div style='margin:100px;'>";
@@ -44,8 +49,9 @@ public class EmailServiceImpl implements EmailService{
         msgg+= "CODE : <strong>";
         msgg+= ePw+"</strong><div><br/> ";
         msgg+= "</div>";
-        message.setText(msgg, "utf-8", "html");//내용
-        message.setFrom(new InternetAddress("hellotesters000@gmail.com","hellotesters"));//보내는 사람
+
+        message.setText(msgg, "utf-8", "html");                                             // 내용 세팅
+        message.setFrom(new InternetAddress("hellotesters000@gmail.com","hellotesters"));   // 보내는 사람
 
         return message;
     }
@@ -77,12 +83,12 @@ public class EmailServiceImpl implements EmailService{
         return key.toString();
     }
 
-    //
+    // 메일 전송 메소드
     @Override
-    public String sendSimpleMessage(String to)throws Exception {
+    public String sendSimpleMessage (String to) throws Exception {
         // TODO Auto-generated method stub
         MimeMessage message = createMessage(to);
-        try{//예외처리
+        try{
             emailSender.send(message);
         }catch(MailException es){
             es.printStackTrace();
