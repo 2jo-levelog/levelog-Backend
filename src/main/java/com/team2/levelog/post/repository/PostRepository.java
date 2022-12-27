@@ -15,5 +15,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 //    List<Post> findAllByNickname(String userNickname);
     Page<Post> findAllByNickname(String userNickname, Pageable pageable);
 
+    void deleteByUserNickname(String nickname);
+
 //    Page<Post> findAllByNickname(String userNickname);
 }

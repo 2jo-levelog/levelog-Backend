@@ -57,4 +57,9 @@ public class UserController {
         return ResponseUtil.successResponse(userService.getUserInfo(userDetails.getUser()));
     }
 
+    @PostMapping("/delUser")
+    public ResponseEntity<?> deleteUser(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        userService.deleteUser(userDetails.getUser());
+        return ResponseUtil.successResponse(SuccessCode.DELETE_OK);
+    }
 }

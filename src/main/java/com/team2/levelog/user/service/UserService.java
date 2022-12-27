@@ -5,6 +5,9 @@ import com.team2.levelog.global.GlobalResponse.code.ErrorCode;
 import com.team2.levelog.global.GlobalResponse.code.SuccessCode;
 import com.team2.levelog.global.TestDto;
 import com.team2.levelog.global.jwt.JwtUtil;
+import com.team2.levelog.image.repository.ImageRepository;
+import com.team2.levelog.post.repository.LikesRepository;
+import com.team2.levelog.post.repository.PostRepository;
 import com.team2.levelog.user.dto.DupRequestCheck;
 import com.team2.levelog.user.dto.SigninRequestDto;
 import com.team2.levelog.user.dto.SignUpRequestDto;
@@ -27,6 +30,8 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final PostRepository postRepository;
+    private final LikesRepository likesRepository;
     private final JwtUtil jwtUtil;
 
     // 회원가입
@@ -79,7 +84,9 @@ public class UserService {
 
     // 회원탈퇴
     public void deleteUser(User user) {
-
+        postRepository.deleteByUserNickname(user.getNickname());
+        likesRepository.deleteByUserId(user.getId());
+        userRepository.deleteById(user.getId());
     }
 
     public UserInfoDto getUserInfo(User user){
