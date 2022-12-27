@@ -33,7 +33,7 @@ public class PostController {
     @PostMapping ("/posts/write")
     public ResponseEntity<?> addPost(
             @RequestPart(value = "key") PostRequestDto postRequestDto,
-            @RequestPart(value = "multipartFile") List<MultipartFile> multipartFiles,
+            @RequestPart(value = "multipartFile", required = false) List<MultipartFile> multipartFiles,
             @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
 
         if(multipartFiles==null) {
@@ -63,8 +63,11 @@ public class PostController {
 
     // 게시글 수정
     @PutMapping("/posts/{id}")
-    public ResponseEntity<?> updatePost(@PathVariable Long id, @RequestBody PostRequestDto postRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return ResponseUtil.successResponse(postService.updatePost(id, postRequestDto, userDetails.getUser()));
+    public ResponseEntity<?> updatePost(@PathVariable Long id,
+                                        @RequestPart(value = "key") PostRequestDto postRequestDto,
+                                        @RequestPart(value = "multipartFile", required = false) List<MultipartFile> multipartFiles,
+                                        @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
+        return ResponseUtil.successResponse(postService.updatePost(id, postRequestDto, userDetails.getUser(), multipartFiles));
     }
 
     // 게시글 삭제
