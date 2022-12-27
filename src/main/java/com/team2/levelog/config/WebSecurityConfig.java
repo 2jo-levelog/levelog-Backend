@@ -46,6 +46,7 @@ public class WebSecurityConfig {
 //                .toH2Console()));     // h2 사용시 이것을 사용
     }
 
+    // 시큐리티 필터체인 설정
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
@@ -81,6 +82,7 @@ public class WebSecurityConfig {
         return http.build();
     }
 
+    // CORS 세부 설정
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
 

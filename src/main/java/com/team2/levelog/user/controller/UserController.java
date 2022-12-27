@@ -27,6 +27,7 @@ import java.io.IOException;
 public class UserController {
     private final UserService userService;
 
+    // 회원가입
     @PostMapping(value = "/signUp", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<?> signUp(
             @RequestPart(value = "key") @Valid SignUpRequestDto signUpRequestDto,
@@ -35,12 +36,14 @@ public class UserController {
         return ResponseUtil.successResponse(SuccessCode.SIGNUP_OK);
     }
 
+    // 로그인
     @PostMapping("/signIn")
     public ResponseEntity<?> login(@RequestBody SigninRequestDto signinRequestDto, HttpServletResponse response) {
         userService.login(signinRequestDto, response);
         return ResponseUtil.successResponse(SuccessCode.SIGNIN_OK);
     }
 
+    // 이메일 중복 체크
     @PostMapping("/dupEmail")
     public ResponseEntity<?> dupEmailCheck(@RequestBody DupRequestCheck requestCheck) {
         if(userService.dupCheckEmail(requestCheck)){
@@ -49,6 +52,7 @@ public class UserController {
         return ResponseUtil.successResponse(SuccessCode.AVAILABLE_EMAIL);
     }
 
+    // 닉네임 중복 체크
     @PostMapping("/dupNick")
     public ResponseEntity<?> dupNickCheck(@RequestBody DupRequestCheck requestCheck) {
         if(userService.dupCheckNick(requestCheck)){
@@ -57,11 +61,13 @@ public class UserController {
         return ResponseUtil.successResponse(SuccessCode.AVAILABLE_NICKNAME);
     }
 
+    // 유저 프로필 정보 가져오기
     @GetMapping("/userInfo")
     public ResponseEntity<?> getUserInfo(@AuthenticationPrincipal UserDetailsImpl userDetails){
         return ResponseUtil.successResponse(userService.getUserInfo(userDetails.getUser()));
     }
 
+    // 회원 탈퇴
     @PostMapping("/delUser")
     public ResponseEntity<?> deleteUser(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         userService.deleteUser(userDetails.getUser());

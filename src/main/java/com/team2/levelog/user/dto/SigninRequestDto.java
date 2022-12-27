@@ -3,7 +3,7 @@ package com.team2.levelog.user.dto;
 import lombok.Getter;
 
 // 1. 기능    : 로그인 시 입력 요소
-// 2. 작성자  : 조소영
+// 2. 작성자  : 서혁수
 @Getter
 public class SigninRequestDto {
     private String email;       // 유저 이메일

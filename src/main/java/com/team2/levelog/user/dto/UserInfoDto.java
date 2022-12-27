@@ -2,6 +2,8 @@ package com.team2.levelog.user.dto;
 
 import lombok.Getter;
 
+// 1. 기능   : 유저 정보 Dto
+// 2. 작성자 : 서혁수
 @Getter
 public class UserInfoDto {
     private String email;
