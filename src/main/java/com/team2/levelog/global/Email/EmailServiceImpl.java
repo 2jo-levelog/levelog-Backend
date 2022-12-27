@@ -1,5 +1,6 @@
 package com.team2.levelog.global.Email;
 
+import com.team2.levelog.global.GlobalResponse.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -9,6 +10,8 @@ import javax.mail.Message;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.util.Random;
+
+import static com.team2.levelog.global.GlobalResponse.code.ErrorCode.FAIL_SEND_EMAIL;
 
 @Service
 public class EmailServiceImpl implements EmailService{
@@ -47,6 +50,7 @@ public class EmailServiceImpl implements EmailService{
         return message;
     }
 
+    // 인증코드 생성 및 반환
     public static String createKey() {
         StringBuffer key = new StringBuffer();
         Random rnd = new Random();
@@ -72,6 +76,8 @@ public class EmailServiceImpl implements EmailService{
 
         return key.toString();
     }
+
+    //
     @Override
     public String sendSimpleMessage(String to)throws Exception {
         // TODO Auto-generated method stub
@@ -80,7 +86,7 @@ public class EmailServiceImpl implements EmailService{
             emailSender.send(message);
         }catch(MailException es){
             es.printStackTrace();
-            throw new IllegalArgumentException();
+            throw new CustomException(FAIL_SEND_EMAIL);
         }
         return ePw;
     }
