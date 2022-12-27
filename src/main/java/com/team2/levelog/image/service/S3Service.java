@@ -63,4 +63,22 @@ public class S3Service {
         return imageUrlList;
     }
 
+    public String uploadOne(MultipartFile file) throws IOException {
+        String fileName = file.getOriginalFilename();
+        ObjectMetadata objectMetadata = new ObjectMetadata();
+        objectMetadata.setContentLength(file.getSize());
+        objectMetadata.setContentType(file.getContentType());
+
+        s3Client.putObject(new PutObjectRequest(bucket+"/post/image", fileName, file.getInputStream(), objectMetadata)
+                .withCannedAcl(CannedAccessControlList.PublicRead));
+        return s3Client.getUrl(bucket+"/post/image", fileName).toString();
+    }
+
+    public void delete(String fileName) {
+        boolean isExistObject = s3Client.doesObjectExist(bucket, fileName);
+        if(isExistObject == true) {
+            s3Client.deleteObject(bucket, fileName);
+        }
+    }
+
 }

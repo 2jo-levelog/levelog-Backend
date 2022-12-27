@@ -8,6 +8,7 @@ import com.team2.levelog.global.GlobalResponse.CustomException;
 import com.team2.levelog.global.GlobalResponse.code.ErrorCode;
 import com.team2.levelog.image.entity.Image;
 import com.team2.levelog.image.repository.ImageRepository;
+import com.team2.levelog.image.service.S3Service;
 import com.team2.levelog.post.dto.PostLikesResponseDto;
 import com.team2.levelog.post.dto.*;
 import com.team2.levelog.post.entity.Likes;
@@ -21,8 +22,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import com.team2.levelog.user.entity.User;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -36,6 +39,7 @@ public class PostService {
     private final CommentRepository commentRepository;
     private final LikesRepository likesRepository;
     private final ImageRepository imageRepository;
+    private final S3Service s3Service;
 
     //게시글 생성하기
     @Transactional
@@ -117,10 +121,33 @@ public class PostService {
 
     // 포스트 수정
     @Transactional
-    public PostResponseDto updatePost(Long id, PostRequestDto postRequestDto, User user) {
+    public PostResponseDto updatePost(Long id, PostRequestDto postRequestDto, User user, List<MultipartFile> files) throws IOException{
         Post post = postRepository.findById(id).orElseThrow(
                 ()-> new CustomException(ErrorCode.POST_NOT_FOUND)
         );
+
+        List<Image> savedImage = post.getImages();
+        List<Image> imageList = new ArrayList<>();
+
+        for(Image image : savedImage) {
+            for(ImageResponseDto responseDto : postRequestDto.getImageDtos()) {
+                if(image.getImageFile().equals(responseDto.getImgUrl())) {
+                    s3Service.delete(image.getImageFile());
+                    imageRepository.deleteById(image.getId());
+                    imageList.add(image);
+                }
+            }
+        }
+
+        for(Image image : imageList) {
+            imageList.remove(image);
+        }
+
+        if(files != null) {
+            for(MultipartFile file : files) {
+                s3Service.uploadOne(file);
+            }
+        }
 
         if(user.getId().equals(post.getUser().getId())) {           // 작성자 아이디가 현재 로그인한 아이디와 같은지 확인
             post.update(postRequestDto);
