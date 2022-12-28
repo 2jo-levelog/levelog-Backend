@@ -152,6 +152,14 @@ public class PostService {
 
         if(user.getId().equals(post.getUser().getId())) {           // 작성자 아이디가 현재 로그인한 아이디와 같은지 확인
             post.update(postRequestDto);
+
+            List<PostImage> postImageList = imageRepository.findByPost(post);
+
+            for(PostImage image: postImageList) {
+                s3Service.delete(image.getImagePath());
+                imageRepository.delete(image);
+            }
+            s3Service.upload(post, files);
             return new PostResponseDto(post);
         } else {
             // 그 외에는 전부 예외 처리
@@ -170,6 +178,11 @@ public class PostService {
         if(user.getId().equals(post.getUser().getId())) {
             // 맞으면 데이터 삭제
             postRepository.delete(post);
+
+            List<PostImage> imageList = imageRepository.findByPost(post);
+            for(PostImage image : imageList) {
+                s3Service.delete(image.getImagePath());
+            }
         }else {
             throw new CustomException(ErrorCode.NO_ACCESS);
         }

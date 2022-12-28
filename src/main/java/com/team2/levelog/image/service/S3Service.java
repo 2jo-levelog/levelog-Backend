@@ -39,6 +39,10 @@ public class S3Service {
 
     @Value("${cloud.aws.region.static}")
     private String region;
+
+    @Value("${cloud.aws.cloud_front.file_url_format}")
+    private String CLOUD_FRONT_DOMAIN_NAME;
+
     private final ImageRepository imageRepository;
 
 
@@ -65,7 +69,9 @@ public class S3Service {
                     .withCannedAcl(CannedAccessControlList.PublicRead));
 
             String splitUrl = "https://s3." + region + ".amazonaws.com/" + bucket + "/post/image/";
-            String imagePath = s3Client.getUrl(bucket+"/post/image", fileName).toString().split(splitUrl)[1];
+            String originalFileName = s3Client.getUrl(bucket+"/post/image", fileName).toString().split(splitUrl)[1];
+
+            String imagePath = "https://" + CLOUD_FRONT_DOMAIN_NAME + "/post/image/" + originalFileName;
             imageUrlList.add(imagePath);
 
             PostImage image = new PostImage(post, imagePath);
@@ -80,10 +86,10 @@ public class S3Service {
         objectMetadata.setContentLength(file.getSize());
         objectMetadata.setContentType(file.getContentType());
 
-        s3Client.putObject(new PutObjectRequest(bucket+"/profile/image", fileName, file.getInputStream(), objectMetadata)
+        s3Client.putObject(new PutObjectRequest(bucket+"/post/image", fileName, file.getInputStream(), objectMetadata)
                 .withCannedAcl(CannedAccessControlList.PublicRead));
-        String splitUrl = "https://s3." + region + ".amazonaws.com/" + bucket + "/profile/image/";
-        return s3Client.getUrl(bucket+"/profile/image", fileName).toString().split(splitUrl)[1];
+        String splitUrl = "https://s3." + region + ".amazonaws.com/" + bucket + "/post/image/";
+        return s3Client.getUrl(bucket+"/post/image", fileName).toString().split(splitUrl)[1];
     }
 
     public void delete(String fileName) {
@@ -92,5 +98,4 @@ public class S3Service {
             s3Client.deleteObject(bucket, "/post/image/" + fileName);
         }
     }
-
 }
