@@ -19,6 +19,9 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email;
 
+    @Column
+    private Long kakaoId;
+
     @Column(nullable = false, unique = true)
     private String nickname;
 
@@ -38,5 +41,20 @@ public class User {
         this.password = password;
         this.thumbImg = thumbImg;
         this.role = role;
+    }
+
+    public User(String email, String nickname, Long kakaoId, String thumbImg, String password,  UserRoleEnum role){
+        this.kakaoId = kakaoId;
+        this.nickname = nickname;
+        this.email = email;
+        this.thumbImg = thumbImg;
+        this.password = password;
+        this.role = role;
+    }
+
+    // 카카오 아이디 업데이트
+    public User kakaoIdUpdate(Long kakaoId){
+        this.kakaoId = kakaoId;
+        return this;
     }
 }
