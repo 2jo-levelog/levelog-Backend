@@ -11,21 +11,27 @@ import javax.persistence.*;
 @Getter
 @Entity
 @NoArgsConstructor
-public class Image {
+public class PostImage {
 
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Column(nullable = false)
-    private String imageFile;
+    private String imagePath; // 파일 경로
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Post post;
 
-    public Image(String imageFile, Post post) {
-        this.imageFile = imageFile;
+    public PostImage(Post post, String imagePath) {
+        this.imagePath = imagePath;
         this.post = post;
+        post.getPostImageList().add(this);
+    }
+
+    public void update(Post post) {
+        this.post = post;
+        post.getPostImageList().add(this);
     }
 }

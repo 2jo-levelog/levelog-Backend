@@ -2,10 +2,10 @@ package com.team2.levelog.post.service;
 
 import com.team2.levelog.comment.dto.CommentResponseDto;
 import com.team2.levelog.comment.entity.Comment;
-import com.team2.levelog.comment.repository.CommentRepository;
 import com.team2.levelog.global.GlobalResponse.CustomException;
 import com.team2.levelog.global.GlobalResponse.code.ErrorCode;
-import com.team2.levelog.image.entity.Image;
+import com.team2.levelog.image.dto.ImageResponseDto;
+import com.team2.levelog.image.entity.PostImage;
 import com.team2.levelog.image.repository.ImageRepository;
 import com.team2.levelog.image.service.S3Service;
 import com.team2.levelog.post.dto.PostLikesResponseDto;
@@ -22,7 +22,7 @@ import org.springframework.stereotype.Service;
 import com.team2.levelog.user.entity.User;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import javax.imageio.ImageReader;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +39,7 @@ public class PostService {
 
     //게시글 생성하기
     @Transactional
-    public PostResponseDto addPost(PostRequestDto productRequestDto, User user, List<String> imageFiles){
+    public PostResponseDto addPost(PostRequestDto productRequestDto, User user, List<MultipartFile> multipartFiles) throws IOException{
 
         // 저장소에 입력 받은 데이터 저장 // save()때문에 @Transactional 을 사용하지 않아도 됨
         Post post = postRepository.save(new Post(productRequestDto,user));
@@ -50,13 +50,7 @@ public class PostService {
         for (Comment comment : post.getCommentList()) {
             commentResponseDtoList.add(new CommentResponseDto(comment));
         }
-        // db에 url 저장
-        List<String> imageList = new ArrayList<>();
-        for(String imageFile : imageFiles) {
-            Image image = new Image(imageFile, post);
-            imageRepository.save(image);
-            imageList.add(image.getImageFile());
-        }
+        s3Service.upload(post, multipartFiles);
         return new PostResponseDto(post ,commentResponseDtoList);
     }
 
@@ -71,9 +65,9 @@ public class PostService {
         for(Post post : postList){
             // postList에 담긴 데이터들을 하나씩 Dto 리스트에 담아줌
             List<ImageResponseDto> imageResponseDtoList = new ArrayList<>();
-            for (Image image : post.getImages()) {
-                // post에 담긴 이미지들을 image 객체에 하나씩 담아줌
-                imageResponseDtoList.add(new ImageResponseDto(image));
+            for (PostImage postImage : post.getPostImageList()) {
+                // post에 담긴 이미지들을 postImage 객체에 하나씩 담아줌
+                imageResponseDtoList.add(new ImageResponseDto(postImage));
             }
             // post와 imageResponseDtoList 객체를 postMainPageDtoList에 더해줌
             postMainPageDtoList.add(new PostMainPageDto(post, imageResponseDtoList));
@@ -95,9 +89,9 @@ public class PostService {
         for (Post post : postList) {
             List<ImageResponseDto> imageResponseDtoList = new ArrayList<>();
             // post 객체에 담긴 이미지 데이터를 배서 image 객체에 저장
-            for (Image image : post.getImages()) {
+            for (PostImage postImage : post.getPostImageList()) {
                 // Dto 리스트에 Dto로 감싸서 추가
-                imageResponseDtoList.add(new ImageResponseDto(image));
+                imageResponseDtoList.add(new ImageResponseDto(postImage));
             }
             // post와 imageResponseDtoList 객체를 postBlogDtoList에 더해줌
             postBlogDtoList.add(new PostBlogDto(post, imageResponseDtoList));
@@ -120,8 +114,8 @@ public class PostService {
         List<ImageResponseDto> imageResponseDtoList = new ArrayList<>();
 
         // post 객체에서 이미지 하나씩 빼서 DtoList에 후가
-        for (Image image : post.getImages()) {
-            imageResponseDtoList.add(new ImageResponseDto(image));
+        for (PostImage postImage : post.getPostImageList()) {
+            imageResponseDtoList.add(new ImageResponseDto(postImage));
         }
 
         // 댓글을 담을 DtoList 미리 선언
@@ -155,28 +149,6 @@ public class PostService {
                 ()-> new CustomException(ErrorCode.POST_NOT_FOUND)
         );
 
-        List<Image> savedImage = post.getImages();
-        List<Image> imageList = new ArrayList<>();
-
-        for(Image image : savedImage) {
-            for(ImageResponseDto responseDto : postRequestDto.getImageDtos()) {
-                if(image.getImageFile().equals(responseDto.getImgUrl())) {
-                    s3Service.delete(image.getImageFile());
-                    imageRepository.deleteById(image.getId());
-                    imageList.add(image);
-                }
-            }
-        }
-
-        for(Image image : imageList) {
-            imageList.remove(image);
-        }
-
-        if(files != null) {
-            for(MultipartFile file : files) {
-                s3Service.uploadOne(file);
-            }
-        }
 
         if(user.getId().equals(post.getUser().getId())) {           // 작성자 아이디가 현재 로그인한 아이디와 같은지 확인
             post.update(postRequestDto);
