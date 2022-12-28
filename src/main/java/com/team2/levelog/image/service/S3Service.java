@@ -8,7 +8,9 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.team2.levelog.image.entity.PostImage;
+import com.team2.levelog.global.GlobalResponse.CustomException;
+import com.team2.levelog.global.GlobalResponse.code.ErrorCode;
+import com.team2.levelog.image.repository.entity.PostImage;
 import com.team2.levelog.image.repository.ImageRepository;
 import com.team2.levelog.post.entity.Post;
 import lombok.RequiredArgsConstructor;
@@ -17,8 +19,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
-import java.awt.*;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,12 +63,16 @@ public class S3Service {
 
         for(MultipartFile file : multipartFiles) {
             String fileName = file.getOriginalFilename();
-//            ObjectMetadata objectMetadata = new ObjectMetadata();
-//            objectMetadata.setContentLength(file.getSize());
-//            objectMetadata.setContentType(file.getContentType());
+            ObjectMetadata objectMetadata = new ObjectMetadata();
+            objectMetadata.setContentLength(file.getSize());
+            objectMetadata.setContentType(file.getContentType());
 
-            s3Client.putObject(new PutObjectRequest(bucket+"/post/image", fileName, file.getInputStream(), null)
-                    .withCannedAcl(CannedAccessControlList.PublicRead));
+            try(InputStream inputStream = file.getInputStream()) {
+                s3Client.putObject(new PutObjectRequest(bucket+"/post/image", fileName, inputStream, objectMetadata)
+                        .withCannedAcl(CannedAccessControlList.PublicRead));
+            } catch (IOException e) {
+                throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
+            }
 
             String splitUrl = "https://s3." + region + ".amazonaws.com/" + bucket + "/post/image/";
             String originalFileName = s3Client.getUrl(bucket+"/post/image", fileName).toString().split(splitUrl)[1];
@@ -86,10 +92,12 @@ public class S3Service {
         objectMetadata.setContentLength(file.getSize());
         objectMetadata.setContentType(file.getContentType());
 
-        s3Client.putObject(new PutObjectRequest(bucket+"/post/image", fileName, file.getInputStream(), objectMetadata)
+        s3Client.putObject(new PutObjectRequest(bucket+"/profile/image", fileName, file.getInputStream(), objectMetadata)
                 .withCannedAcl(CannedAccessControlList.PublicRead));
-        String splitUrl = "https://s3." + region + ".amazonaws.com/" + bucket + "/post/image/";
-        return s3Client.getUrl(bucket+"/post/image", fileName).toString().split(splitUrl)[1];
+        String splitUrl = "https://s3." + region + ".amazonaws.com/" + bucket + "/profile/image/";
+        String originalFileName = s3Client.getUrl(bucket+"/profile/image", fileName).toString().split(splitUrl)[1];
+
+        return "https://" + CLOUD_FRONT_DOMAIN_NAME + "/profile/image/" + originalFileName;
     }
 
     public void delete(String fileName) {
