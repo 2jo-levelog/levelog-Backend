@@ -2,7 +2,7 @@ package com.team2.levelog.post.entity;
 
 import com.team2.levelog.comment.entity.Comment;
 import com.team2.levelog.global.timestamped.Timestamped;
-import com.team2.levelog.image.entity.PostImage;
+import com.team2.levelog.image.repository.entity.PostImage;
 import com.team2.levelog.post.dto.PostRequestDto;
 import com.team2.levelog.user.entity.User;
 import lombok.AllArgsConstructor;

@@ -1,4 +1,4 @@
-package com.team2.levelog.image.entity;
+package com.team2.levelog.image.repository.entity;
 
 import com.team2.levelog.post.entity.Post;
 import lombok.Getter;

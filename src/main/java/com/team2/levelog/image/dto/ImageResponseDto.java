@@ -1,6 +1,6 @@
 package com.team2.levelog.image.dto;
 
-import com.team2.levelog.image.entity.PostImage;
+import com.team2.levelog.image.repository.entity.PostImage;
 import lombok.Getter;
 
 @Getter

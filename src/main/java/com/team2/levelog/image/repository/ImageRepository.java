@@ -1,6 +1,6 @@
 package com.team2.levelog.image.repository;
 
-import com.team2.levelog.image.entity.PostImage;
+import com.team2.levelog.image.repository.entity.PostImage;
 import com.team2.levelog.post.entity.Post;
 import org.springframework.data.jpa.repository.JpaRepository;
 

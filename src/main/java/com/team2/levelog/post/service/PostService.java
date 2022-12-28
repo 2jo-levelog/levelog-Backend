@@ -5,7 +5,7 @@ import com.team2.levelog.comment.entity.Comment;
 import com.team2.levelog.global.GlobalResponse.CustomException;
 import com.team2.levelog.global.GlobalResponse.code.ErrorCode;
 import com.team2.levelog.image.dto.ImageResponseDto;
-import com.team2.levelog.image.entity.PostImage;
+import com.team2.levelog.image.repository.entity.PostImage;
 import com.team2.levelog.image.repository.ImageRepository;
 import com.team2.levelog.image.service.S3Service;
 import com.team2.levelog.post.dto.PostLikesResponseDto;
