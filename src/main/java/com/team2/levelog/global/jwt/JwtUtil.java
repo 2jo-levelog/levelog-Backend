@@ -15,7 +15,6 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
@@ -27,15 +26,14 @@ import java.util.Optional;
 @Component
 @RequiredArgsConstructor
 public class JwtUtil {
-
     // 헤더에 설정 사항
     public static final String AC_TOKEN = "acToken";
     public static final String RS_TOKEN = "rsToken";
     private static final String BEARER_PREFIX = "Bearer ";
 
     // 만료시간
-    private static final long AC_TOKEN_TIME = 30 * 1 * 1000L;
-    private static final long RS_TOKEN_TIME = 60 * 60 * 1000L;
+    private static final long AC_TOKEN_TIME = 30 * 1 * 1000L;       // 30초
+    private static final long RS_TOKEN_TIME = 60 * 60 * 1000L;      // 1시간
 
     // 시크릿 키
     @Value("${jwt.secret.key}")
@@ -53,8 +51,8 @@ public class JwtUtil {
         key = Keys.hmacShaKeyFor(bytes);
     }
 
-    // 토큰 생성
-    public String createToken(String userEmail, String nickname) {
+    // accessToken 토큰 생성
+    public String createAcToken(String userEmail, String nickname) {
         Date now = new Date();
 
         return BEARER_PREFIX + Jwts.builder()
@@ -66,6 +64,7 @@ public class JwtUtil {
                 .compact();
     }
 
+    // refreshToken 토큰 생성
     public String createRsToken(String userEmail, String nickname) {
         Date now = new Date();
         return BEARER_PREFIX + Jwts.builder()
@@ -103,7 +102,7 @@ public class JwtUtil {
         } catch (SecurityException | MalformedJwtException e) {
             log.info("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.");
         } catch (ExpiredJwtException e) {
-            return false;
+//            return false;
         } catch (UnsupportedJwtException e) {
             log.info("Unsupported JWT token, 지원되지 않는 JWT 토큰 입니다.");
         } catch (IllegalArgumentException e) {
@@ -114,7 +113,7 @@ public class JwtUtil {
 
     // 토큰 생성
     public TokenDto createAllToken(String email, String nickname) {
-        return new TokenDto(createToken(email, nickname), createRsToken(email, nickname));
+        return new TokenDto(createAcToken(email, nickname), createRsToken(email, nickname));
     }
 
     // refreshToken 검증
@@ -130,7 +129,11 @@ public class JwtUtil {
     }
 
     // 인증 객체를 실제로 만드는 부분
+    //  - UsernamePasswordAuthenticationToken : 인증용 객체 생성(사용자 인증)
     public Authentication createAuthentication(String nickname) {
+        if (refreshTokenRepository.findByUserNickname(nickname).isEmpty()) {
+            throw new IllegalArgumentException("Token Error");
+        }
         UserDetails userDetails = userDetailsServiceImpl.loadUserByUsername(nickname);
         return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }
@@ -150,7 +153,7 @@ public class JwtUtil {
         return refreshTokenRepository.existsByRefreshToken(rsToken);
     }
 
-    public void setHeaderAcToken(HttpServletResponse response, String acToken) {
-        response.setHeader(AC_TOKEN, acToken);
-    }
+//    public void setHeaderAcToken(HttpServletResponse response, String acToken) {
+//        response.setHeader(AC_TOKEN, acToken);
+//    }
 }

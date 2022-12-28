@@ -3,6 +3,8 @@ package com.team2.levelog.global.jwt;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+// 1. 기능   : 토큰 동시 발급에 사용되는 DTO
+// 2. 작성자 : 서혁수
 @Getter
 @NoArgsConstructor
 public class TokenDto {

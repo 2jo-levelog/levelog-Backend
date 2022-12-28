@@ -41,9 +41,10 @@ public class UserService {
             throw new IllegalArgumentException("중복 닉네임 존재");
         }
 
-        // password 값 인코딩 후 Dto 에 재주입 후 Dto 를 Entity 로 변환
+        // 2. password 값 인코딩 후 Dto 에 재주입 후 Dto 를 Entity 로 변환
         String encodePassword = passwordEncoder.encode(requestDto.getPassword());
 
+        // 3. 새로운 객체 생성 및 db 에 저장
         User user = new User(requestDto.getEmail(), requestDto.getNickname(), encodePassword, requestDto.getProfileImg(), UserRoleEnum.USER);
         userRepository.save(user);
     }
@@ -51,7 +52,7 @@ public class UserService {
     // 폼 로그인
     @Transactional
     public void login(SigninRequestDto requestDto, HttpServletResponse response) {
-        // userId 로 user 정보 호출
+        // 1. userId 로 user 정보 호출
         User user = userRepository.findByEmail(requestDto.getEmail()).orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않는 이메일 입니다.")
         );
@@ -60,27 +61,30 @@ public class UserService {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
 
-        // email 과 nickname 값을 포함한 토큰 생성 후 tokenDto 에 저장
+        // 2. email 과 nickname 값을 포함한 토큰 생성 후 tokenDto 에 저장
         TokenDto tokenDto = jwtUtil.createAllToken(requestDto.getEmail(), user.getNickname());
 
-        // nickname 값에 해당하는 refreshToken 을 DB 에서 가져옴
+        // 3. nickname 값에 해당하는 refreshToken 을 DB 에서 가져옴
         Optional<RefreshToken> refreshToken = refreshTokenRepository.findByUserNickname(user.getNickname());
 
-        // isPresent() 메소드는 Optional 객체의 값이 null 인지 여부
+        // 4. isPresent() 메소드는 Optional 객체의 값이 null 인지 여부
         if (refreshToken.isPresent()) {
+            // 5. rsToken 이 null 즉, 존재하지 않으면 새롭게 발급해서 db에 저장
             refreshTokenRepository.save(refreshToken.get().updateToken(tokenDto.getRefreshToken()));
         } else {
+            // 6. rsToken 이 존재할 경우 새롭게 발급한 rsToken 으로 다시 db 에 저장
             RefreshToken newToken = new RefreshToken(tokenDto.getRefreshToken(), user.getNickname());
             refreshTokenRepository.save(newToken);
         }
 
+        // 7. 현재 헤더에 새롭게 지정해준다.
         setHeader(response, tokenDto);
 
     }
 
     // 토큰 재발행 (전역으로 사용)
     public ResponseEntity<TestDto> issuedToken(String email, String nickname, HttpServletResponse response) {
-        response.addHeader(JwtUtil.AC_TOKEN, jwtUtil.createToken(email, nickname));
+        response.addHeader(JwtUtil.AC_TOKEN, jwtUtil.createAcToken(email, nickname));
         return ResponseEntity.ok().body(new TestDto(200, "토근 재발행 완료"));
     }
 
@@ -111,12 +115,12 @@ public class UserService {
     // 로그아웃
     @Transactional
     public ResponseEntity<TestDto> signOut(String nickname) {
-        // 해당 유저의 refreshToken 이 없을 경우
+        // 1. 해당 유저의 refreshToken 이 없을 경우
         if (refreshTokenRepository.findByUserNickname(nickname).isEmpty()) {
             return ResponseEntity.badRequest().body(new TestDto(400, "로그인을 해주세요."));
         }
         // 자신의 refreshToken 만 삭제 가능
-        // 해당 유저의 토큰으로 부터 닉네임을 가져오는 코드
+        // 2. 해당 유저의 토큰으로 부터 닉네임을 가져오는 코드
         String findNick = refreshTokenRepository.findByUserNickname(nickname).get().getUserNickname();
         if (nickname.equals(findNick)) {
             refreshTokenRepository.deleteByUserNickname(nickname);
