@@ -1,6 +1,6 @@
 package com.team2.levelog.post.dto;
 
-import com.team2.levelog.image.entity.Image;
+import com.team2.levelog.image.dto.ImageResponseDto;
 import com.team2.levelog.post.entity.Post;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

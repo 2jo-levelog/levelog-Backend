@@ -2,7 +2,7 @@ package com.team2.levelog.post.entity;
 
 import com.team2.levelog.comment.entity.Comment;
 import com.team2.levelog.global.timestamped.Timestamped;
-import com.team2.levelog.image.entity.Image;
+import com.team2.levelog.image.entity.PostImage;
 import com.team2.levelog.post.dto.PostRequestDto;
 import com.team2.levelog.user.entity.User;
 import lombok.AllArgsConstructor;
@@ -36,9 +36,9 @@ public class Post extends Timestamped {
     private int count;                                                        // 좋아요 갯수
 
     @OneToMany(
-            mappedBy = "post", cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
+            mappedBy = "post", cascade = {CascadeType.REMOVE},
             orphanRemoval = true)
-    private List<Image> images = new ArrayList<>();
+    private List<PostImage> postImageList = new ArrayList<>();
 
     public Post(PostRequestDto postRequestDto, User user) {
         this.user       =    user;

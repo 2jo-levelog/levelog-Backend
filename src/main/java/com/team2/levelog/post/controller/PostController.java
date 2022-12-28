@@ -36,11 +36,7 @@ public class PostController {
             @RequestPart(value = "multipartFile", required = false) List<MultipartFile> multipartFiles,
             @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
 
-        if(multipartFiles==null) {
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
-        }
-        List<String> imageFiles = s3Service.upload(multipartFiles);
-        return ResponseEntity.ok(postService.addPost(postRequestDto, userDetails.getUser(), imageFiles));
+        return ResponseEntity.ok(postService.addPost(postRequestDto, userDetails.getUser(), multipartFiles));
     }
 
     // 메인 페이지 게시글 리스트 불러오기
