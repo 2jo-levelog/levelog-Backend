@@ -55,6 +55,7 @@ public class UserController {
         return ResponseUtil.successResponse(SuccessCode.AVAILABLE_NICKNAME);
     }
 
+    // 회원 임시 가입 및 확인 메일 전송
     @PostMapping("/email/signUp")
     public ResponseEntity<?> emailSignUp(@RequestBody @Valid SignUpRequestDto signUpRequestDto) throws Exception {
 
@@ -63,7 +64,8 @@ public class UserController {
         return ResponseUtil.successResponse(SuccessCode.SEND_EMAIL);
     }
 
-    @PostMapping("/email/confirm/{emailConfirmCode}")
+    // 이메일 확인 : 전송된 email에서 접근하는 url로 최종 가입 확인 절차
+    @GetMapping("/email/confirm/{emailConfirmCode}")
     public ResponseEntity<?> emailConfirm(@PathVariable String emailConfirmCode){
         userService.emailConfirm(emailConfirmCode);
         return ResponseUtil.successResponse(SuccessCode.REGISTER_OK);

@@ -25,6 +25,7 @@ import static com.team2.levelog.global.GlobalResponse.code.ErrorCode.EMAIL_CONFI
 
 // 1. 기능   : 유저 서비스
 // 2. 작성자 : 서혁수
+// 3. 수정사항 : email 인증 절차 by 조소영
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -89,7 +90,7 @@ public class UserService {
 
     }
 
-    // 이메일인증 회원가입
+    // 이메일 인증 전송 및 임시 회원가입(Redis에 저장)
     public void emailSignUp(SignUpRequestDto requestDto) throws Exception {
         // 1. 중복 여부 검사
         if (userRepository.existsByEmail(requestDto.getEmail())) {
@@ -107,6 +108,7 @@ public class UserService {
         redisUtil.set(emailAuthCode, user, 10);
     }
 
+    // 메일로 확인시 Redis에 기록된 내용이 MySQL로 저장되고 Redis내용은 삭제
     public void emailConfirm(String emailConfirmCode){
         User user = (User) redisUtil.get(emailConfirmCode);
 
