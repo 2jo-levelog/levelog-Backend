@@ -13,6 +13,11 @@ import com.team2.levelog.user.dto.UserInfoDto;
 import com.team2.levelog.user.entity.User;
 import com.team2.levelog.user.entity.UserRoleEnum;
 import com.team2.levelog.user.repository.UserRepository;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.security.SecurityException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -21,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Optional;
 
 // 1. 기능   : 유저 서비스
 // 2. 작성자 : 서혁수
@@ -50,13 +56,36 @@ public class UserService {
         String encodePassword = passwordEncoder.encode(requestDto.getPassword());
 
         // 3. s3 에 이미지 업로드를 하고 해당 이미지 URL 가져오기
-        String imgUrl = s3Service.uploadOne(multipartFile);
+        //      - 아무런 이미지를 넣지 않으면 null 값이 들어간다.
+        String imgUrl = null;
 
-        // 4. 받아온 값들로 새로운 User 객체를 만들기
-        User user = new User(requestDto.getEmail(), requestDto.getNickname(), encodePassword, imgUrl, UserRoleEnum.USER);
+        // 4. 새롭게 만들 빈 User 객체 생성
+        User user = new User();
 
-        // 5. DB 에 새로운 유저정보 넣어주기
+        // 5. 받아온 값들로 새로운 User 객체를 만들기
+        try {
+            // 6. 회원가입시 프로필 이미지를 등록하면 s3에 업로드 및 새로운 user 객체 생성
+            if (!multipartFile.isEmpty()) {
+                imgUrl = s3Service.uploadOne(multipartFile);
+                user = new User(requestDto.getEmail(), requestDto.getNickname(), encodePassword, imgUrl, UserRoleEnum.USER);
+            }
+        } catch (NullPointerException e) {
+            // 7. 이미지를 등록하지 않을 경우 빈값으로 들어간다.
+            user = new User(requestDto.getEmail(), requestDto.getNickname(), encodePassword, UserRoleEnum.USER);
+        }
+
+        // 8. DB 에 새로운 유저정보 넣어주기
         userRepository.save(user);
+
+//        if (!multipartFile.isEmpty()) {
+//            imgUrl = s3Service.uploadOne(multipartFile);
+//            User user = new User(requestDto.getEmail(), requestDto.getNickname(), encodePassword, imgUrl, UserRoleEnum.USER);
+//            userRepository.save(user);
+//        } else {
+//            User user = new User(requestDto.getEmail(), requestDto.getNickname(), encodePassword, UserRoleEnum.USER);
+//            userRepository.save(user);
+//        }
+
     }
 
     // 폼 로그인
@@ -101,7 +130,7 @@ public class UserService {
     }
 
     // 프로필 정보 가져오기
-    public UserInfoDto getUserInfo(User user){
+    public UserInfoDto getUserInfo(User user) {
         return new UserInfoDto(user.getEmail(), user.getNickname(), user.getThumbImg());
     }
 

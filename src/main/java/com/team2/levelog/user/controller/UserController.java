@@ -31,7 +31,7 @@ public class UserController {
     @PostMapping(value = "/signUp", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<?> signUp(
             @RequestPart(value = "key") @Valid SignUpRequestDto signUpRequestDto,
-            @RequestPart(value = "multipartFile") MultipartFile multipartFile) throws IOException {
+            @RequestPart(value = "multipartFile", required = false) MultipartFile multipartFile) throws IOException {
         userService.signUp(signUpRequestDto, multipartFile);
         return ResponseUtil.successResponse(SuccessCode.SIGNUP_OK);
     }
