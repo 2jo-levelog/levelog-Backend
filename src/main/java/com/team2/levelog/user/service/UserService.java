@@ -1,8 +1,11 @@
 package com.team2.levelog.user.service;
 
+import com.team2.levelog.global.Email.EmailService;
+import com.team2.levelog.global.Email.EmailServiceImpl;
 import com.team2.levelog.global.GlobalResponse.CustomException;
 import com.team2.levelog.global.GlobalResponse.code.ErrorCode;
 import com.team2.levelog.global.GlobalResponse.code.SuccessCode;
+import com.team2.levelog.global.Redis.RedisUtil;
 import com.team2.levelog.global.TestDto;
 import com.team2.levelog.global.jwt.JwtUtil;
 import com.team2.levelog.user.dto.DupRequestCheck;
@@ -18,6 +21,8 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
 
+import static com.team2.levelog.global.GlobalResponse.code.ErrorCode.EMAIL_CONFIRM_NOT_FOUND;
+
 // 1. 기능   : 유저 서비스
 // 2. 작성자 : 서혁수
 @Service
@@ -27,6 +32,8 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final RedisUtil redisUtil;
+    private final EmailServiceImpl emailServiceImpl;
 
     // 회원가입
     public void signUp(SignUpRequestDto requestDto) {
@@ -83,7 +90,7 @@ public class UserService {
     }
 
     // 이메일인증 회원가입
-    public void emailSignUp(SignUpRequestDto requestDto) {
+    public void emailSignUp(SignUpRequestDto requestDto) throws Exception {
         // 1. 중복 여부 검사
         if (userRepository.existsByEmail(requestDto.getEmail())) {
             throw new CustomException(ErrorCode.EXIST_EMAIL);
@@ -93,9 +100,21 @@ public class UserService {
         }
 
         String encodePassword = passwordEncoder.encode(requestDto.getPassword());
-
         User user = new User(requestDto.getEmail(), requestDto.getNickname(), encodePassword, requestDto.getProfileImg(), UserRoleEnum.USER);
 
-        userRepository.save(user);
+        String emailAuthCode = emailServiceImpl.sendSimpleMessage(requestDto.getEmail());
+
+        redisUtil.set(emailAuthCode, user, 10);
+    }
+
+    public void emailConfirm(String emailConfirmCode){
+        User user = (User) redisUtil.get(emailConfirmCode);
+
+        if(user == null){
+            throw new CustomException(EMAIL_CONFIRM_NOT_FOUND);
+        } else {
+            userRepository.save(user);
+            redisUtil.delete(emailConfirmCode);
+        }
     }
 }

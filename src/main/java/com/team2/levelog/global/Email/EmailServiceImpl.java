@@ -37,17 +37,16 @@ public class EmailServiceImpl implements EmailService{
         // 보낼 메일 내용
         String msgg="";
         msgg+= "<div style='margin:100px;'>";
-        msgg+= "<h1> 안녕하세요 Babble입니다. </h1>";
+        msgg+= "<h1> 안녕하세요 레벨로그입니다. </h1>";
         msgg+= "<br>";
-        msgg+= "<p>아래 코드를 회원가입 창으로 돌아가 입력해주세요<p>";
-        msgg+= "<br>";
-        msgg+= "<p>감사합니다!<p>";
+        msgg+= "<p>저희 사이트를 이용해주셔서 감사합니다.<p>";
         msgg+= "<br>";
         msgg+= "<div align='center' style='border:1px solid black; font-family:verdana';>";
         msgg+= "<h3 style='color:blue;'>회원가입 인증 코드입니다.</h3>";
         msgg+= "<div style='font-size:130%'>";
-        msgg+= "CODE : <strong>";
-        msgg+= ePw+"</strong><div><br/> ";
+        msgg+= "<strong>";
+//        msgg+= "<a href='http://13.209.84.31:8080/api/auth/email/confirm/" + ePw + "'>"+ "클릭하여 인증을 완료해주세요" + "</a></strong><div><br/>";
+        msgg+= "<a href='http://localhost:8080/api/auth/email/confirm/" + ePw + "'>"+ "클릭하여 인증을 완료해주세요" + "</a></strong><div><br/>";
         msgg+= "</div>";
 
         message.setText(msgg, "utf-8", "html");                                             // 내용 세팅

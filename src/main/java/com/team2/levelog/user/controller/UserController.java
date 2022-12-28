@@ -25,7 +25,7 @@ import java.util.Map;
 @RequestMapping("/api/auth")
 public class UserController {
     private final UserService userService;
-    private final EmailService emailService;
+
 
     @PostMapping("/signUp")
     public ResponseEntity<?> signUp(@RequestBody @Valid SignUpRequestDto signUpRequestDto) {
@@ -55,14 +55,20 @@ public class UserController {
         return ResponseUtil.successResponse(SuccessCode.AVAILABLE_NICKNAME);
     }
 
-    @PostMapping("/signUp")
+    @PostMapping("/email/signUp")
     public ResponseEntity<?> emailSignUp(@RequestBody @Valid SignUpRequestDto signUpRequestDto) throws Exception {
 
         userService.emailSignUp(signUpRequestDto);
-        emailService.sendSimpleMessage(signUpRequestDto.getEmail());
 
-        return ResponseUtil.successResponse(SuccessCode.SIGNUP_OK);
+        return ResponseUtil.successResponse(SuccessCode.SEND_EMAIL);
     }
+
+    @PostMapping("/email/confirm/{emailConfirmCode}")
+    public ResponseEntity<?> emailConfirm(@PathVariable String emailConfirmCode){
+        userService.emailConfirm(emailConfirmCode);
+        return ResponseUtil.successResponse(SuccessCode.REGISTER_OK);
+    }
+
 
 
 }

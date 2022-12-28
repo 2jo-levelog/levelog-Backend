@@ -28,6 +28,7 @@ public enum ErrorCode {
 
     // 404 NOT_FOUND : Resource 를 찾을 수 없음
     NOT_FOUND(HttpStatus.BAD_REQUEST, "NOT_FOUND"),
+    EMAIL_CONFIRM_NOT_FOUND(HttpStatus.BAD_REQUEST, "NOT_FOUND"),
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 유저 정보를 찾을 수 없습니다"),
     POST_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 글이 존재하지 않습니다."),
     COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 댓글이 존재하지 않습니다."),
