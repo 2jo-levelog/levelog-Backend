@@ -89,7 +89,7 @@
 
 ## 4. 서비스 아키텍쳐
 
-![levelog_서비스-아키텍쳐](https://user-images.githubusercontent.com/111271565/209950377-d1834280-a35d-4253-ad2e-7f3bee338302.jpg)
+![levelog_서비스-아키텍쳐 (2)](https://user-images.githubusercontent.com/111271565/209953282-c972624b-fd96-400d-b54e-6a1d89a7a9f8.jpg)
 
 -----
 
