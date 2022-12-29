@@ -43,20 +43,30 @@ public class PostService {
     private final S3Service s3Service;
 
     //게시글 생성하기
+//    @Transactional
+//    public PostResponseDto addPost(PostRequestDto productRequestDto, User user, List<MultipartFile> multipartFiles) throws IOException{
+//
+//        // 저장소에 입력 받은 데이터 저장 // save()때문에 @Transactional 을 사용하지 않아도 됨
+//        Post post = postRepository.save(new Post(productRequestDto,user));
+//        // CommentResponseDto 객체 리스트형으로 선언
+//        List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
+//
+//        // post 객체에 담긴 데이터를 하나씩 CommentResponseDto에 넣어서 초기화 후 commentResponseDtoList에 추가
+//        for (Comment comment : post.getCommentList()) {
+//            commentResponseDtoList.add(new CommentResponseDto(comment));
+//        }
+//        s3Service.upload(post, multipartFiles);
+//        return new PostResponseDto(post ,commentResponseDtoList);
+//    }
+
     @Transactional
-    public PostResponseDto addPost(PostRequestDto productRequestDto, User user, List<MultipartFile> multipartFiles) throws IOException{
-
-        // 저장소에 입력 받은 데이터 저장 // save()때문에 @Transactional 을 사용하지 않아도 됨
-        Post post = postRepository.save(new Post(productRequestDto,user));
-        // CommentResponseDto 객체 리스트형으로 선언
+    public PostResponseDto addPost(PostRequestDto postRequestDto, User user) {
+        Post post = postRepository.save(new Post(postRequestDto, user));
         List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
-
-        // post 객체에 담긴 데이터를 하나씩 CommentResponseDto에 넣어서 초기화 후 commentResponseDtoList에 추가
         for (Comment comment : post.getCommentList()) {
             commentResponseDtoList.add(new CommentResponseDto(comment));
         }
-        s3Service.upload(post, multipartFiles);
-        return new PostResponseDto(post ,commentResponseDtoList);
+        return new PostResponseDto(post, commentResponseDtoList);
     }
 
     // 메인페이지 게시글 보기
@@ -108,7 +118,7 @@ public class PostService {
     }
 
     //개인 블로그 게시글 상세페이지
-    public PostResponseDto getPost(Long id) {
+    public PostResponseDto getPost(Long id, User user) {
         // 포스트 ID로 DB에서 검색 후 데이터 post 객체에 저장
         Post post = postRepository.findById(id).orElseThrow(
                 // 못 찾았으면 에러 처리
@@ -147,30 +157,53 @@ public class PostService {
                 commentResponseDtoList.add(new CommentResponseDto(comment,childCommentList, user1.getThumbImg()));
             }
         }
-        return new PostResponseDto(post, imageResponseDtoList, commentResponseDtoList);
+        boolean likeState;
+        if (likesRepository.findByPostAndUser(post, user).isPresent()) {
+            likeState = false;
+        } else {
+            likeState = true;
+        }
+        return new PostResponseDto(post, imageResponseDtoList, commentResponseDtoList, likeState);
     }
 
     // 포스트 수정
+//    @Transactional
+//    public PostResponseDto updatePost(Long id, PostRequestDto postRequestDto, User user, List<MultipartFile> files) throws IOException{
+//
+//        // DB에서 Id로 검색한 데이터를 post 객체에 저장
+//        Post post = postRepository.findById(id).orElseThrow(
+//                // 없으면 예외 처리
+//                ()-> new CustomException(ErrorCode.POST_NOT_FOUND)
+//        );
+//
+//
+//        if(user.getId().equals(post.getUser().getId())) {           // 작성자 아이디가 현재 로그인한 아이디와 같은지 확인
+//            post.update(postRequestDto);
+//
+//            List<PostImage> postImageList = imageRepository.findByPost(post);
+//
+//            for(PostImage image: postImageList) {
+//                s3Service.delete(image.getImagePath());
+//                imageRepository.delete(image);
+//            }
+//            s3Service.upload(post, files);
+//            return new PostResponseDto(post);
+//        } else {
+//            // 그 외에는 전부 예외 처리
+//            throw new CustomException(ErrorCode.NO_ACCESS);
+//        }
+//    }
+
     @Transactional
-    public PostResponseDto updatePost(Long id, PostRequestDto postRequestDto, User user, List<MultipartFile> files) throws IOException{
-    
+    public PostResponseDto updatePost(Long id, PostRequestDto postRequestDto, User user) throws IOException{
+
         // DB에서 Id로 검색한 데이터를 post 객체에 저장
         Post post = postRepository.findById(id).orElseThrow(
                 // 없으면 예외 처리
                 ()-> new CustomException(ErrorCode.POST_NOT_FOUND)
         );
-
-
         if(user.getId().equals(post.getUser().getId())) {           // 작성자 아이디가 현재 로그인한 아이디와 같은지 확인
             post.update(postRequestDto);
-
-            List<PostImage> postImageList = imageRepository.findByPost(post);
-
-            for(PostImage image: postImageList) {
-                s3Service.delete(image.getImagePath());
-                imageRepository.delete(image);
-            }
-            s3Service.upload(post, files);
             return new PostResponseDto(post);
         } else {
             // 그 외에는 전부 예외 처리

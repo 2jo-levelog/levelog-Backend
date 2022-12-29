@@ -13,5 +13,5 @@ import java.util.List;
 public class PostRequestDto {
     private String title;                        // 포스트 타이틀
     private String content;                      // 포스트 내용
-    private List<ImageResponseDto> imageList;
+//    private List<ImageResponseDto> imageList;
 }

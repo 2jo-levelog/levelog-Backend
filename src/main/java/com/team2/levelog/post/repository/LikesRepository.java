@@ -12,7 +12,9 @@ public interface LikesRepository extends JpaRepository<Likes, Long> {
     @Transactional
     void deleteByPostAndUser(Post post, User user);                    // Post와 User 정보로 DB에서 좋아요 검색 후 삭제
 
-    Optional<Likes> findByPostAndUser(Post post, User user)  ;
+    Optional<Likes> findByPostAndUser(Post post, User user);
+    Optional<Likes> findByPostIdAndUser(Long post, User user);
+    Optional<Likes> findByUser(User user);
 
     void deleteByUserId(Long userId);
 }
