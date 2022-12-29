@@ -14,6 +14,8 @@ import com.team2.levelog.post.entity.Likes;
 import com.team2.levelog.post.repository.LikesRepository;
 import com.team2.levelog.post.entity.Post;
 import com.team2.levelog.post.repository.PostRepository;
+import com.team2.levelog.user.entity.UserRoleEnum;
+import com.team2.levelog.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -26,6 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 // 1. 기능      :   Post 관련 모든 비즈니스 로직
 // 2. 작성자     :   홍윤재
@@ -35,6 +38,8 @@ public class PostService {
     private final PostRepository postRepository;
     private final LikesRepository likesRepository;
     private final ImageRepository imageRepository;
+
+    private final UserRepository userRepository;
     private final S3Service s3Service;
 
     //게시글 생성하기
@@ -118,22 +123,28 @@ public class PostService {
             imageResponseDtoList.add(new ImageResponseDto(postImage));
         }
 
+        // 유저 정보를 못가져오는 경우의 오류 처리를 위한 nullUser
+        User nullUser = new User("","","","", UserRoleEnum.USER);
+
         // 댓글을 담을 DtoList 미리 선언
         List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
         // post 객체에서 댓글을 빼서 comment에 추가
         for (Comment comment : post.getCommentList()) {
             // 대댓글을 담을 DtoList 선언
             List<CommentResponseDto> childCommentList = new ArrayList<>();
+            // 유저 프로필 사진을 조회하기 위한 유저 검색
+            User user1 = userRepository.findByNickname(comment.getNickname()).orElse(nullUser);
             // 댓글의 부모가 없다면 (일반 댓글이라면) commnet 객체에서 대댓글들을 하나씩 빼서 parentComment 객체에 넣어줌
             if(comment.getChildren()==null){
                 for (Comment parentComment : comment.getParent()){
                     // parentComment 객체에서 찾은 사용자의 아이디와 전달받은 id값이 일치하면 childCommentList에 Dto로 감싸서 넣어줌
                     if (id.equals(parentComment.getPost().getId())) {
-                        childCommentList.add(new CommentResponseDto(parentComment));
+                        User user2 = userRepository.findByNickname(parentComment.getNickname()).orElse(nullUser);
+                        childCommentList.add(new CommentResponseDto(parentComment, user2.getThumbImg()));
                     }
                 }
                 // commentResponseDtoList에 데이터 추가
-                commentResponseDtoList.add(new CommentResponseDto(comment,childCommentList));
+                commentResponseDtoList.add(new CommentResponseDto(comment,childCommentList, user1.getThumbImg()));
             }
         }
         return new PostResponseDto(post, imageResponseDtoList, commentResponseDtoList);
