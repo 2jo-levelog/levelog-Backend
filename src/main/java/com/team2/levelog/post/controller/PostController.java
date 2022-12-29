@@ -16,8 +16,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 // 1. 기능      :   Post 관련 API 컨트롤러 구현
 // 2. 작성자     :   홍윤재
@@ -57,9 +60,9 @@ public class PostController {
     }
 
     // 게시글 상세페이지
-    @PostMapping("/posts/{id}")
-    public ResponseEntity<?> getpost(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails){
-        return ResponseUtil.successResponse(postService.getPost(id, userDetails.getUser()));
+    @GetMapping("/posts/{id}")
+    public ResponseEntity<?> getpost(@PathVariable Long id, HttpServletRequest request){
+        return ResponseUtil.successResponse(postService.getPost(id, request));
     }
 
     // 게시글 수정

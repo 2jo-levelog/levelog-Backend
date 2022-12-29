@@ -58,7 +58,7 @@ public class WebSecurityConfig {
         http.httpBasic().disable()
                 .authorizeRequests()
                 .antMatchers(HttpMethod.GET).permitAll()
-                .antMatchers("/api/auth/**", "/images").permitAll()
+                .antMatchers("/api/auth/**", "/images", "/api/posts/{id}").permitAll()
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll() // cors1
                 .anyRequest().authenticated()
 
