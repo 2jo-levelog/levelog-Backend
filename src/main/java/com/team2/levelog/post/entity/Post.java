@@ -34,7 +34,6 @@ public class Post extends Timestamped {
     private List<Comment> commentList = new ArrayList<>();                    // 댓글 리스트
     @Column(nullable = false)
     private int count;                                                        // 좋아요 갯수
-
     @OneToMany(
             mappedBy = "post", cascade = {CascadeType.REMOVE},
             orphanRemoval = true)

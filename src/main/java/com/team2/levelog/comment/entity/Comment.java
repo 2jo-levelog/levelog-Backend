@@ -50,6 +50,7 @@ public class Comment extends Timestamped {
     public Comment(Post post, CommentRequestDto commentRequestDto, User user){
         this.user = user;
         this.post = post;
+        this.depth = 0;
         this.nickname = user.getNickname();
         this.comment = commentRequestDto.getComment();
     }
@@ -57,6 +58,7 @@ public class Comment extends Timestamped {
     public Comment(Post post, Comment children, CommentRequestDto commentRequestDto, User user){
         this.user = user;
         this.post = post;
+        this.depth = 1;
         this.children = children;
         this.nickname = user.getNickname();
         this.comment = commentRequestDto.getComment();
