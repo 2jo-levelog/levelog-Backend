@@ -13,6 +13,9 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 // 1. 기능      :   Post 관련 컨트롤러
@@ -52,9 +55,9 @@ public class PostController {
     }
 
     // 게시글 상세페이지
-    @PostMapping("/posts/{id}")
-    public ResponseEntity<?> getpost(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails){
-        return ResponseUtil.successResponse(postService.getPost(id, userDetails.getUser()));
+    @GetMapping("/posts/{id}")
+    public ResponseEntity<?> getpost(@PathVariable Long id, HttpServletRequest request){
+        return ResponseUtil.successResponse(postService.getPost(id, request));
     }
 
     // 게시글 수정
