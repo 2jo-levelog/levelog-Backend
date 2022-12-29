@@ -14,12 +14,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
 
-// 1. 기능   : 회원 관련 종합 컨트롤러
+// 1. 기능   : 회원 관련 컨트롤러
 // 2. 작성자 : 서혁수
 @RestController
 @RequiredArgsConstructor

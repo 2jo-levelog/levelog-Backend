@@ -17,13 +17,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+// 1. 기능   : 이미지 첨부 비즈니스 로직
+// 2. 작성자 : 박소연
 @Service
 @RequiredArgsConstructor
 public class S3Service {

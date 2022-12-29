@@ -23,15 +23,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import com.team2.levelog.user.entity.User;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
-// 1. 기능      :   Post 관련 모든 비즈니스 로직
-// 2. 작성자     :   홍윤재
+// 1. 기능      :   게시글 비즈니스 로직
+// 2. 작성자    :   홍윤재
 @Service
 @RequiredArgsConstructor
 public class PostService {

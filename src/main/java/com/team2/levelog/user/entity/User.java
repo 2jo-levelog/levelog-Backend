@@ -46,4 +46,8 @@ public class User {
         this.password = password;
         this.role = role;
     }
+
+    public void update(String thumbImg) {
+        this.thumbImg = thumbImg;
+    }
 }

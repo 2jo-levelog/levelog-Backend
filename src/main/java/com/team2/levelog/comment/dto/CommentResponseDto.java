@@ -1,12 +1,14 @@
 package com.team2.levelog.comment.dto;
 
 import com.team2.levelog.comment.entity.Comment;
-import com.team2.levelog.global.timestamped.Timestamped;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+// 1. 기능 : 댓글 구성요소 반환값
+// 2. 작성자 : 조소영
 @Getter
 public class CommentResponseDto {
     private Long id;

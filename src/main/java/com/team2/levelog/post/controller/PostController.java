@@ -10,18 +10,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
-import java.util.List;
 
-// 1. 기능      :   Post 관련 API 컨트롤러 구현
-// 2. 작성자     :   홍윤재
-
+// 1. 기능      :   Post 관련 컨트롤러
+// 2. 작성자    :   홍윤재
 @RequiredArgsConstructor       // 생성자 주입
 @RestController
 @RequestMapping("/api")

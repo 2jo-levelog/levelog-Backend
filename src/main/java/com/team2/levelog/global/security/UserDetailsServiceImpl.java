@@ -8,7 +8,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-
 // 1. 기능   : DB 에서 정보 가져오기
 // 2. 작성자 : 서혁수
 @Service

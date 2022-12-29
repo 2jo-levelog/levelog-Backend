@@ -11,7 +11,7 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-// 1. 기능 : 댓글, 대댓글 Entity
+// 1. 기능 : 댓글, 대댓글 구성요소
 // 2. 작성자 : 조소영
 @Entity
 @Getter

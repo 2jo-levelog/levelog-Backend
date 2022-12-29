@@ -13,22 +13,15 @@ import com.team2.levelog.user.dto.UserInfoDto;
 import com.team2.levelog.user.entity.User;
 import com.team2.levelog.user.entity.UserRoleEnum;
 import com.team2.levelog.user.repository.UserRepository;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.UnsupportedJwtException;
-import io.jsonwebtoken.security.SecurityException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Optional;
 
-// 1. 기능   : 유저 서비스
+// 1. 기능   : 유저 비즈니스 로직
 // 2. 작성자 : 서혁수
 @Service
 @RequiredArgsConstructor
@@ -52,38 +45,38 @@ public class UserService {
             throw new CustomException(ErrorCode.EXIST_NICKNAME);
         }
 
+        // 2. 이미지를 가져오는 문자열 선언
         String imgUrl = null;
-        // 2. 클라이언트로부터 받아온 비밀번호를 인코딩 해서 가져오기
+
+        // 3. 클라이언트로부터 받아온 비밀번호를 인코딩 해서 가져오기
         String encodePassword = passwordEncoder.encode(requestDto.getPassword());
 
-        String[] URL = {"https://ichef.bbci.co.uk/news/800/cpsprodpb/E172/production/_126241775_getty_cats.png",
-                "https://s3.ap-northeast-2.amazonaws.com/elasticbeanstalk-ap-northeast-2-176213403491/media/magazine_img/magazine_270/%EC%8D%B8%EB%84%A4%EC%9D%BC.jpg",
-        "https://s3.ap-northeast-2.amazonaws.com/elasticbeanstalk-ap-northeast-2-176213403491/media/magazine_img/magazine_270/4.jpg",
-        "https://s3.ap-northeast-2.amazonaws.com/elasticbeanstalk-ap-northeast-2-176213403491/media/magazine_img/magazine_270/7.jpg",
-        "https://i0.wp.com/dailypetcare.net/wp-content/uploads/2020/11/Screen-Shot-2020-11-24-at-9.10.35-PM-edited-e1606302091776.png?w=1236&ssl=1"};
-        double random = Math.random();
-        int num = (int)Math.round(random * (URL.length-1));
-        // 3. s3 에 이미지 업로드를 하고 해당 이미지 URL 가져오기
+        // 4. 랜덤 이미지를 가져오는 부분
         //      - 아무런 이미지를 넣지 않으면 null 값이 들어간다.
+        double random = Math.random();
+        int randomNum = (int)Math.round(random * 4);
+        String[] enumName = {"ONE", "TWO", "THREE", "FOUR", "FIVE"};
+        imgUrl = RandomImg.valueOf(enumName[randomNum]).getUrl();
 
-        // 4. 새롭게 만들 빈 User 객체 생성
+        System.out.println("==========================" + imgUrl);
+
+        // 5. 새롭게 만들 빈 User 객체 생성
         User user = new User();
 
-        // 5. 받아온 값들로 새로운 User 객체를 만들기
+        // 6. 받아온 값들로 새로운 User 객체를 만들기
         try {
-            // 6. 회원가입시 프로필 이미지를 등록하면 s3에 업로드 및 새로운 user 객체 생성
+            // 7. 회원가입시 프로필 이미지를 등록하면 s3에 업로드 및 새로운 user 객체 생성
             if (!multipartFile.isEmpty()) {
                 imgUrl = s3Service.uploadOne(multipartFile);
                 user = new User(requestDto.getEmail(), requestDto.getNickname(), encodePassword, imgUrl, UserRoleEnum.USER);
             }
         } catch (NullPointerException e) {
-            // 7. 이미지를 등록하지 않을 경우 빈값으로 들어간다.
-            imgUrl = URL[num];
-            System.out.println("=======================" + imgUrl);
+            // 8. 이미지를 등록하지 않을 경우 빈값으로 들어간다.
             user = new User(requestDto.getEmail(), requestDto.getNickname(), encodePassword, UserRoleEnum.USER);
+            user.update(imgUrl);
         }
 
-        // 8. DB 에 새로운 유저정보 넣어주기
+        // 9. DB 에 새로운 유저정보 넣어주기
         userRepository.save(user);
 
 //        if (!multipartFile.isEmpty()) {

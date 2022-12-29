@@ -1,11 +1,12 @@
 package com.team2.levelog.post.entity;
 
-import com.team2.levelog.post.entity.Post;
 import com.team2.levelog.user.entity.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
+// 1. 기능      :   좋아요 구성요소
+// 2. 작성자    :   홍윤재
 @Getter
 @Entity
 @NoArgsConstructor

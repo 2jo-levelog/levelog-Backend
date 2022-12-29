@@ -8,11 +8,12 @@ import com.team2.levelog.user.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+// 1. 기능      :   게시글 구성요소
+// 2. 작성자    :   홍윤재
 @Getter
 @Entity
 @NoArgsConstructor

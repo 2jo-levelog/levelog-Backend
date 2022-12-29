@@ -6,11 +6,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+// 1. 기능      :   메인페이지 전체 게시글 반환값
+// 2. 작성자    :   홍윤재
 @Getter
 @Setter
 @NoArgsConstructor

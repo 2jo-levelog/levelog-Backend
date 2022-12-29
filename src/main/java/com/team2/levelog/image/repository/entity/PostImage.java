@@ -5,9 +5,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-
 import javax.persistence.*;
 
+// 1. 기능   : 이미지 첨부 구성요소
+// 2. 작성자 : 박소연
 @Getter
 @Entity
 @NoArgsConstructor
