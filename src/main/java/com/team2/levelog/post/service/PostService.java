@@ -4,6 +4,7 @@ import com.team2.levelog.comment.dto.CommentResponseDto;
 import com.team2.levelog.comment.entity.Comment;
 import com.team2.levelog.global.GlobalResponse.CustomException;
 import com.team2.levelog.global.GlobalResponse.code.ErrorCode;
+import com.team2.levelog.global.jwt.JwtUtil;
 import com.team2.levelog.image.dto.ImageResponseDto;
 import com.team2.levelog.image.repository.entity.PostImage;
 import com.team2.levelog.image.repository.ImageRepository;
@@ -16,6 +17,7 @@ import com.team2.levelog.post.entity.Post;
 import com.team2.levelog.post.repository.PostRepository;
 import com.team2.levelog.user.entity.UserRoleEnum;
 import com.team2.levelog.user.repository.UserRepository;
+import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -23,9 +25,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import com.team2.levelog.user.entity.User;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 // 1. 기능      :   게시글 비즈니스 로직
 // 2. 작성자    :   홍윤재
@@ -35,9 +40,9 @@ public class PostService {
     private final PostRepository postRepository;
     private final LikesRepository likesRepository;
     private final ImageRepository imageRepository;
-
     private final UserRepository userRepository;
     private final S3Service s3Service;
+    private final JwtUtil jwtUtil;
 
     //게시글 생성하기
 //    @Transactional
@@ -115,7 +120,7 @@ public class PostService {
     }
 
     //개인 블로그 게시글 상세페이지
-    public PostResponseDto getPost(Long id, User user) {
+    public PostResponseDto getPost(Long id, HttpServletRequest request) {
         // 포스트 ID로 DB에서 검색 후 데이터 post 객체에 저장
         Post post = postRepository.findById(id).orElseThrow(
                 // 못 찾았으면 에러 처리
@@ -154,13 +159,22 @@ public class PostService {
                 commentResponseDtoList.add(new CommentResponseDto(comment,childCommentList, user1.getThumbImg()));
             }
         }
-        boolean likeState;
-        if (likesRepository.findByPostAndUser(post, user).isPresent()) {
-            likeState = false;
+        if (jwtUtil.resolveToken(request) == null) {
+            boolean likeState = false;
+            return new PostResponseDto(post, imageResponseDtoList, commentResponseDtoList, likeState);
         } else {
-            likeState = true;
+            String token = jwtUtil.resolveToken(request);
+            Claims claims = jwtUtil.getUserInfoFromToken(token);
+            Optional<User> user = userRepository.findByNickname((String) claims.get("nickname"));
+
+            if (likesRepository.findByPostAndUser(post, user).isPresent()) {
+                boolean likeState = false;
+                return new PostResponseDto(post, imageResponseDtoList, commentResponseDtoList, likeState);
+            } else {
+                boolean likeState = true;
+                return new PostResponseDto(post, imageResponseDtoList, commentResponseDtoList, likeState);
+            }
         }
-        return new PostResponseDto(post, imageResponseDtoList, commentResponseDtoList, likeState);
     }
 
     // 포스트 수정
