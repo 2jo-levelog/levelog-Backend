@@ -30,13 +30,18 @@ public class PostController {
     private final S3Service s3Service;
 
     // 포스트 업로드
+//    @PostMapping ("/posts/write")
+//    public ResponseEntity<?> addPost(
+//            @RequestPart(value = "key") PostRequestDto postRequestDto,
+//            @RequestPart(value = "multipartFile", required = false) List<MultipartFile> multipartFiles,
+//            @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
+//
+//        return ResponseEntity.ok(postService.addPost(postRequestDto, userDetails.getUser(), multipartFiles));
+//    }
     @PostMapping ("/posts/write")
-    public ResponseEntity<?> addPost(
-            @RequestPart(value = "key") PostRequestDto postRequestDto,
-            @RequestPart(value = "multipartFile", required = false) List<MultipartFile> multipartFiles,
-            @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
+    public ResponseEntity<?> addPost(@RequestBody PostRequestDto postRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
-        return ResponseEntity.ok(postService.addPost(postRequestDto, userDetails.getUser(), multipartFiles));
+        return ResponseEntity.ok(postService.addPost(postRequestDto, userDetails.getUser()));
     }
 
     // 메인 페이지 게시글 리스트 불러오기
@@ -52,18 +57,17 @@ public class PostController {
     }
 
     // 게시글 상세페이지
-    @GetMapping("/posts/{id}")
-    public ResponseEntity<?> getpost(@PathVariable Long id){
-        return ResponseUtil.successResponse(postService.getPost(id));
+    @PostMapping("/posts/{id}")
+    public ResponseEntity<?> getpost(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        return ResponseUtil.successResponse(postService.getPost(id, userDetails.getUser()));
     }
 
     // 게시글 수정
     @PutMapping("/posts/{id}")
     public ResponseEntity<?> updatePost(@PathVariable Long id,
-                                        @RequestPart(value = "key") PostRequestDto postRequestDto,
-                                        @RequestPart(value = "multipartFile", required = false) List<MultipartFile> multipartFiles,
+                                        @RequestBody PostRequestDto postRequestDto,
                                         @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
-        return ResponseUtil.successResponse(postService.updatePost(id, postRequestDto, userDetails.getUser(), multipartFiles));
+        return ResponseUtil.successResponse(postService.updatePost(id, postRequestDto, userDetails.getUser()));
     }
 
     // 게시글 삭제

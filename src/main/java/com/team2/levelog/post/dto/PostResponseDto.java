@@ -23,6 +23,7 @@ public class PostResponseDto {
     private String nickname;                                               // 작성자 닉네임
     private int cmtCnt;                                                    // 댓글 갯수
     private int likeCnt;                                                   // 좋아요 갯수
+    private boolean likeState;                                             // 좋아요 상황
     private LocalDateTime createdAt;                                       // 작성 시간
     private LocalDateTime modifiedAt;                                      // 수정 시간
     private List<ImageResponseDto> imageList = new ArrayList<>();          // 이미지 리스트
@@ -54,6 +55,20 @@ public class PostResponseDto {
         this.commentList  =     commentResponseDtos;
     }
 
+    public PostResponseDto(Post post, List<ImageResponseDto> images, List<CommentResponseDto> commentResponseDtos, boolean likeState){
+        this.id           =     post.getId();
+        this.title        =     post.getTitle();
+        this.content      =     post.getContent();
+        this.nickname     =     post.getUser().getNickname();
+        this.likeState    =     likeState;
+        this.imageList    =     images;
+        this.cmtCnt       =     post.getCommentList().size();
+        this.likeCnt      =     post.getCount();
+        this.createdAt    =     post.getCreatedAt();
+        this.modifiedAt   =     post.getModifiedAt();
+        this.commentList  =     commentResponseDtos;
+    }
+
     public PostResponseDto(Post post){
         this.id           =     post.getId();
         this.title        =     post.getTitle();
@@ -66,5 +81,9 @@ public class PostResponseDto {
 
     public void update_cmtCnt(){
         this.cmtCnt      =     cmtCnt + 1;
+    }
+
+    public void update_likeState(boolean n){
+        this.likeState  =   n;
     }
 }
