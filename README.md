@@ -3,10 +3,15 @@
 -----
 ## 1. 프로젝트 소개
 - 개발자들을 위한 블로그인 velog를 클론 코딩하여 코딩 능력을 향상 시키는 레벨 업 프로젝트입니다. <br><br>
+<br>
 
 ----
+## 2. 시연 영상
+![레벨로그](https://user-images.githubusercontent.com/111271565/218298213-ff34badd-a5e4-4333-9aab-bf5399d3481f.gif)
+<br><br>
 
-## 2. 기능 명세서
+----
+## 3. 기능 명세서
 
 #### 1. 로그인 / 회원가입
 
@@ -41,7 +46,7 @@
 
 ----
 
-## 3. 기술 스택
+## 4. 기술 스택
 <div align=center> 
 
 ## * Frontend Tech Stack
@@ -87,13 +92,13 @@
 
 ------
 
-## 4. 서비스 아키텍쳐
+## 5. 서비스 아키텍쳐
 
 ![levelog_서비스-아키텍쳐 (2)](https://user-images.githubusercontent.com/111271565/209953282-c972624b-fd96-400d-b54e-6a1d89a7a9f8.jpg)
 
 -----
 
-## 5. 트러블 슈팅
+## 6. 트러블 슈팅
 
 
 ✅  **CORS 관련한 트러블 슈팅** <br><br>
@@ -123,7 +128,7 @@ True / False로 반환 -> 토큰값이 없을 경우 비회원이기 때문에 �
 
 -----
 
-## 6. 관련 링크
+## 7. 관련 링크
 
 📌 프론트엔드 깃허브 : https://github.com/2jo-levelog/levelog-Frontend <br>
 📌 백엔드 깃허브 : https://github.com/2jo-levelog/levelog-Backend
@@ -134,7 +139,7 @@ True / False로 반환 -> 토큰값이 없을 경우 비회원이기 때문에 �
 
 ----
 
-## 7. 팀원 정보
+## 8. 팀원 정보
 
 | 이름  | 깃 허브 주소                          |
 |-----|----------------------------------|
