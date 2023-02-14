@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
+// 1. 기능 : 성공 메세지 커스텀
+// 2. 작성자 : 조소영
 @Getter
 @AllArgsConstructor
 public enum SuccessCode {

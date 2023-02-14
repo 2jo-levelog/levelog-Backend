@@ -2,17 +2,18 @@ package com.team2.levelog.post.entity;
 
 import com.team2.levelog.comment.entity.Comment;
 import com.team2.levelog.global.timestamped.Timestamped;
-import com.team2.levelog.image.entity.Image;
+import com.team2.levelog.image.repository.entity.PostImage;
 import com.team2.levelog.post.dto.PostRequestDto;
 import com.team2.levelog.user.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+// 1. 기능      :   게시글 구성요소
+// 2. 작성자    :   홍윤재
 @Getter
 @Entity
 @NoArgsConstructor
@@ -20,25 +21,24 @@ import java.util.List;
 public class Post extends Timestamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id;                                                          // 고유 ID
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User user;
+    private User user;                                                        // User 와 연관 관계 설정
     @Column
-    private String title;
+    private String title;                                                     // 포스트 타이틀
     @Column
-    private String content;
+    private String content;                                                   // 포스트 내용
     @Column
-    private String nickname;
-    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
-    private List<Comment> commentList = new ArrayList<>();
+    private String nickname;                                                  // 작성자 닉네임
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)               // 연관된 post가 삭제되면 함께 삭제되도록 cascade 설정
+    private List<Comment> commentList = new ArrayList<>();                    // 댓글 리스트
     @Column(nullable = false)
-    private int count;
-
+    private int count;                                                        // 좋아요 갯수
     @OneToMany(
-            mappedBy = "post", cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
+            mappedBy = "post", cascade = {CascadeType.REMOVE},
             orphanRemoval = true)
-    private List<Image> images = new ArrayList<>();
+    private List<PostImage> postImageList = new ArrayList<>();
 
     public Post(PostRequestDto postRequestDto, User user) {
         this.user       =    user;

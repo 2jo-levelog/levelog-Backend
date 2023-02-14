@@ -11,7 +11,7 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-// 1. 기능 : 댓글, 대댓글 Entity
+// 1. 기능 : 댓글, 대댓글 구성요소
 // 2. 작성자 : 조소영
 @Entity
 @Getter
@@ -50,16 +50,20 @@ public class Comment extends Timestamped {
     public Comment(Post post, CommentRequestDto commentRequestDto, User user){
         this.user = user;
         this.post = post;
+        this.depth = 0;
         this.nickname = user.getNickname();
         this.comment = commentRequestDto.getComment();
+        this.depth = 0;
     }
 
     public Comment(Post post, Comment children, CommentRequestDto commentRequestDto, User user){
         this.user = user;
         this.post = post;
+        this.depth = 1;
         this.children = children;
         this.nickname = user.getNickname();
         this.comment = commentRequestDto.getComment();
+        this.depth = 1;
     }
 
     public void update(CommentRequestDto commentRequestDto){

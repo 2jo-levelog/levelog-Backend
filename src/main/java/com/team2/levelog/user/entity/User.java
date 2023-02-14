@@ -39,4 +39,15 @@ public class User {
         this.thumbImg = thumbImg;
         this.role = role;
     }
+
+    public User(String email, String nickname, String password, UserRoleEnum role) {
+        this.email = email;
+        this.nickname = nickname;
+        this.password = password;
+        this.role = role;
+    }
+
+    public void update(String thumbImg) {
+        this.thumbImg = thumbImg;
+    }
 }
