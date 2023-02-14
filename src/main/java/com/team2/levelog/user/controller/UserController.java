@@ -1,5 +1,6 @@
 package com.team2.levelog.user.controller;
 
+import com.team2.levelog.global.Email.EmailService;
 import com.team2.levelog.global.GlobalResponse.ResponseUtil;
 import com.team2.levelog.global.GlobalResponse.code.ErrorCode;
 import com.team2.levelog.global.GlobalResponse.code.SuccessCode;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.util.Map;
 import java.io.IOException;
 
 // 1. 기능   : 회원 관련 컨트롤러
@@ -59,6 +61,24 @@ public class UserController {
         }
         return ResponseUtil.successResponse(SuccessCode.AVAILABLE_NICKNAME);
     }
+
+    // 회원 임시 가입 및 확인 메일 전송
+    @PostMapping("/email/signUp")
+    public ResponseEntity<?> emailSignUp(@RequestBody @Valid SignUpRequestDto signUpRequestDto) throws Exception {
+
+        userService.emailSignUp(signUpRequestDto);
+
+        return ResponseUtil.successResponse(SuccessCode.SEND_EMAIL);
+    }
+
+    // 이메일 확인 : 전송된 email에서 접근하는 url로 최종 가입 확인 절차
+    @GetMapping("/email/confirm/{emailConfirmCode}")
+    public ResponseEntity<?> emailConfirm(@PathVariable String emailConfirmCode){
+        userService.emailConfirm(emailConfirmCode);
+        return ResponseUtil.successResponse(SuccessCode.REGISTER_OK);
+    }
+
+
 
     // 유저 프로필 정보 가져오기
     @GetMapping("/userInfo")

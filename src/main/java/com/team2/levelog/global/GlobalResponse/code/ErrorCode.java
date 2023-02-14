@@ -28,6 +28,7 @@ public enum ErrorCode {
 
     // 404 NOT_FOUND : Resource 를 찾을 수 없음
     NOT_FOUND(HttpStatus.BAD_REQUEST, "NOT_FOUND"),
+    EMAIL_CONFIRM_NOT_FOUND(HttpStatus.BAD_REQUEST, "NOT_FOUND"),
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 유저 정보를 찾을 수 없습니다"),
     POST_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 글이 존재하지 않습니다."),
     COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 댓글이 존재하지 않습니다."),
@@ -41,6 +42,7 @@ public enum ErrorCode {
     EXPIRED_JWT(HttpStatus.INTERNAL_SERVER_ERROR, "만료된 JWT 입니다"),
     UnsupportedJwt_JWT(HttpStatus.INTERNAL_SERVER_ERROR, "지원되지 않는 JWT 입니다"),
     SQL_CONSTRAINT_VIOLATION(HttpStatus.INTERNAL_SERVER_ERROR, "무결성 제약 조건에 위배됩니다"),
+    FAIL_SEND_EMAIL(HttpStatus.INTERNAL_SERVER_ERROR, "인증 이메일 전송이 실패했습니다"),
     SPRING_SECURITY_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "시큐리티 에러");
 
     private final HttpStatus httpStatus;

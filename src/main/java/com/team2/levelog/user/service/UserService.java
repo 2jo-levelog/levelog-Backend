@@ -1,7 +1,9 @@
 package com.team2.levelog.user.service;
 
+import com.team2.levelog.global.Email.EmailServiceImpl;
 import com.team2.levelog.global.GlobalResponse.CustomException;
 import com.team2.levelog.global.GlobalResponse.code.ErrorCode;
+import com.team2.levelog.global.Redis.RedisUtil;
 import com.team2.levelog.global.jwt.JwtUtil;
 import com.team2.levelog.image.service.S3Service;
 import com.team2.levelog.post.repository.LikesRepository;
@@ -21,8 +23,12 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+import static com.team2.levelog.global.GlobalResponse.code.ErrorCode.EMAIL_CONFIRM_NOT_FOUND;
+
+// 1. 기능   : 유저 서비스
 // 1. 기능   : 유저 비즈니스 로직
 // 2. 작성자 : 서혁수
+// 3. 수정사항 : email 인증 절차 by 조소영
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -32,6 +38,8 @@ public class UserService {
     private final PostRepository postRepository;
     private final LikesRepository likesRepository;
     private final JwtUtil jwtUtil;
+    private final RedisUtil redisUtil;
+    private final EmailServiceImpl emailServiceImpl;
     private final S3Service s3Service;
 
     // 회원가입
@@ -50,6 +58,8 @@ public class UserService {
 
         // 3. 클라이언트로부터 받아온 비밀번호를 인코딩 해서 가져오기
         String encodePassword = passwordEncoder.encode(requestDto.getPassword());
+
+//        User user = new User(requestDto.getEmail(), requestDto.getNickname(), encodePassword, requestDto.getProfileImg(), UserRoleEnum.USER);
 
         // 4. 랜덤 이미지를 가져오는 부분
         //      - 아무런 이미지를 넣지 않으면 null 값이 들어간다.
@@ -129,6 +139,36 @@ public class UserService {
         postRepository.deleteByUserNickname(user.getNickname());
         likesRepository.deleteByUserId(user.getId());
         userRepository.deleteById(user.getId());
+    }
+
+    // 이메일 인증 전송 및 임시 회원가입(Redis에 저장)
+    public void emailSignUp(SignUpRequestDto requestDto) throws Exception {
+        // 1. 중복 여부 검사
+        if (userRepository.existsByEmail(requestDto.getEmail())) {
+            throw new CustomException(ErrorCode.EXIST_EMAIL);
+        }
+        if (userRepository.existsByNickname(requestDto.getNickname())) {
+            throw new CustomException(ErrorCode.EXIST_NICKNAME);
+        }
+
+        String encodePassword = passwordEncoder.encode(requestDto.getPassword());
+        User user = new User(requestDto.getEmail(), requestDto.getNickname(), encodePassword, requestDto.getProfileImg(), UserRoleEnum.USER);
+
+        String emailAuthCode = emailServiceImpl.sendSimpleMessage(requestDto.getEmail());
+
+        redisUtil.set(emailAuthCode, user, 10);
+    }
+
+    // 메일로 확인시 Redis에 기록된 내용이 MySQL로 저장되고 Redis내용은 삭제
+    public void emailConfirm(String emailConfirmCode) {
+        User user = (User) redisUtil.get(emailConfirmCode);
+
+        if (user == null) {
+            throw new CustomException(EMAIL_CONFIRM_NOT_FOUND);
+        } else {
+            userRepository.save(user);
+            redisUtil.delete(emailConfirmCode);
+        }
     }
 
     // 프로필 정보 가져오기
